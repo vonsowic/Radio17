@@ -8,13 +8,10 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.Toast;
-import java.io.IOException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -80,8 +77,6 @@ public class ArticleListViewActivity extends MainActivity {
                 catch(Exception e){
                     // for example when page doesn't exist
                 }
-
-
 
             } else {
                 // display error

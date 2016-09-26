@@ -176,7 +176,7 @@ public class ArticleActivity extends AppCompatActivity {
 
                         //TEXT - strong
                     } else if (tmp == "strong") {
-                        TextView tv = new JustifyTextView(ArticleActivity.this, null);
+                        TextView tv = new TextView(ArticleActivity.this, null);
                         tv.setText(elements.get(i).text());
                         tv.setTypeface(null, Typeface.BOLD);
                         tv.setTextSize(17);
@@ -184,7 +184,7 @@ public class ArticleActivity extends AppCompatActivity {
 
                         //TEXT - ephazised
                     } else if (tmp == "em") {
-                        TextView tv = new JustifyTextView(ArticleActivity.this, null);
+                        TextView tv = new TextView(ArticleActivity.this, null);
                         tv.setText(elements.get(i).text());
                         tv.setTypeface(null, Typeface.ITALIC);
                         tv.setTextSize(17);
@@ -203,13 +203,9 @@ public class ArticleActivity extends AppCompatActivity {
                                     tv.setText(elements.get(i).text());
                                     tv.setTextSize(17);
                                     layout.addView(tv);
-/*
-                                    DocumentView documentView = new DocumentView(ArticleActivity.this, DocumentView.PLAIN_TEXT);  // Support plain text
-                                    documentView.getDocumentLayoutParams().setTextAlignment(TextAlignment.JUSTIFIED);
-                                    documentView.setText(elements.get(i).text());
 
-                                    layout.addView( documentView); //*/
                                 }
+
                             } else {
 
                             TextView tv = new TextView(ArticleActivity.this);
@@ -217,11 +213,6 @@ public class ArticleActivity extends AppCompatActivity {
                             tv.setTextSize(17);
                             layout.addView(tv);
 
-                                /*
-                                DocumentView documentView = new DocumentView(ArticleActivity.this, DocumentView.PLAIN_TEXT);  // Support plain text
-                                documentView.getDocumentLayoutParams().setTextAlignment(TextAlignment.JUSTIFIED);
-                                documentView.setText(elements.get(i).text());
-                                layout.addView( documentView); //*/
 
 
                             }
