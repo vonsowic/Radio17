@@ -41,7 +41,10 @@ public class ArticleListViewActivity extends MainActivity {
         //ustawianie wyslanego w MainActivity tytulu dla gornego paska
         String title = i.getStringExtra("article_list_category");
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(title);
+        try {
+            actionBar.setTitle(title);
+        } catch (NullPointerException e){
+        }
 
 
         new LoadAndPrepareContent().execute(url);
@@ -70,11 +73,10 @@ public class ArticleListViewActivity extends MainActivity {
 
             ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            Log.v("STATUS CODE:", "rozpoczec");
 
             if (networkInfo != null && networkInfo.isConnected()) {
                 try {
-                    doc = Jsoup.connect(url[0]+"page/2000").get();
+                    doc = Jsoup.connect(url[0]).get();
                 }
                 catch (RuntimeException e){
                     return null;
