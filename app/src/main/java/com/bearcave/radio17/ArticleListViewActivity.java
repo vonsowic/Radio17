@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
@@ -36,7 +37,7 @@ public class ArticleListViewActivity extends MainActivity {
         Intent i = getIntent();
         url = i.getStringExtra("article_list_url");
 
-        //ustawianie wyslanego w MainActivity tytulu dla gornego paska
+        //set title sent in MainActivity
         String title = i.getStringExtra("article_list_category");
         ActionBar actionBar = getSupportActionBar();
         try {
@@ -76,13 +77,10 @@ public class ArticleListViewActivity extends MainActivity {
                 try {
                     doc = Jsoup.connect(url[0]).get();
                 }
-                catch (RuntimeException e){
-                    return null;
+                catch(Exception e){
+                    // for example when page doesn't exist
                 }
-                catch (IOException e) {
-                    Toast.makeText(ArticleListViewActivity.this, e.toString(), Toast.LENGTH_LONG).show();
-                    return null;
-                }
+
 
 
             } else {
