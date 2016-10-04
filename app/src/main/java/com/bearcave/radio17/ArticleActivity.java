@@ -43,6 +43,9 @@ public class ArticleActivity extends AppCompatActivity {
     ImageLoader imageLoader;
     static boolean clicked = false;
     static Intent intent;
+    final int font_size = 17;
+    final String strong = "strong" ;
+    final String em = "em";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +90,33 @@ public class ArticleActivity extends AppCompatActivity {
             this.layout = (LinearLayout) findViewById(R.id.articleContent);
         }
 
+
+        private void enter(){
+            TextView tv = new TextView(ArticleActivity.this);
+            tv.setText("\n");
+            tv.setTextSize(font_size);
+            layout.addView(tv);
+        }
+
+        private void addText(String text, String type){
+
+            TextView tv = new TextView(ArticleActivity.this, null);
+            tv.setText(text);
+
+            if ( type != null){
+                if ( type == "strong") {
+                    tv.setTypeface(null, Typeface.BOLD);
+                } else if (type == "em"){
+                    tv.setTypeface(null, Typeface.ITALIC);
+                }
+            }
+
+            tv.setTextSize( font_size );
+            layout.addView(tv);
+            enter();
+
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -125,16 +155,22 @@ public class ArticleActivity extends AppCompatActivity {
             return postContent;
         }
 
+
+        //this method checks what is in elements postContent and shows that on screen
         @Override
         protected void onPostExecute(Elements result) {
 
+
+            mProgressDialog.dismiss();
+
             if (result == null) {
-                mProgressDialog.dismiss();
                 return;
             }
 
 
             Elements elements;
+            String non_url_text = null;
+
             for (int j = 0; j < result.size(); j++) {
 
                 elements = result.get(j).getAllElements();
@@ -146,87 +182,74 @@ public class ArticleActivity extends AppCompatActivity {
                     // IMAGE
                     if (tmp == "img") {
                         ImageView ib = new ImageView(ArticleActivity.this);
-                        imageLoader.displayImage(result.get(j).select("a").attr("href").toString(), ib, options);
+                        imageLoader.displayImage(elements.get(i).absUrl("src"), ib, options);
                         layout.addView(ib);
-
+                        enter();
 
                         //AUDIO
-                    } else if (tmp == "audio") {
-                        final Button button = new Button(ArticleActivity.this);
-                        button.setText("PLAY");
-                        final String pomUrl = result.get(j).select("a").attr("href");
-                        View.OnClickListener buttonListener = new View.OnClickListener() {
+                    } else if (tmp == "source") {
 
-                            @Override
-                            public void onClick(View v) {
-                                if (clicked) {
-                                    stopService(intent);
-                                    clicked = false;
-                                } else {
-                                    intent = new Intent(ArticleActivity.this, PlayerService.class);
-                                    intent.putExtra("audio_src", pomUrl);
-                                    clicked = true;
-                                    startService(intent);
+                        if ( elements.get(i).attr("type").startsWith("audio") ) {
+
+                            final Button button = new Button(ArticleActivity.this);
+                            button.setText("PLAY");
+                            final String pomUrl = elements.get(i).absUrl("src");
+                            View.OnClickListener buttonListener = new View.OnClickListener() {
+
+                                @Override
+                                public void onClick(View v) {
+                                    if (clicked) {
+                                        stopService(intent);
+                                        clicked = false;
+                                    } else {
+                                        intent = new Intent(ArticleActivity.this, PlayerService.class);
+                                        intent.putExtra("audio_src", pomUrl);
+                                        clicked = true;
+                                        startService(intent);
+                                    }
                                 }
-                            }
-                        };
-                        layout.addView(button);
-                        button.setOnClickListener(buttonListener);
+                            };
+                            layout.addView(button);
+                            button.setOnClickListener(buttonListener);
 
+                        }
 
                         //TEXT - strong
                     } else if (tmp == "strong") {
-                        TextView tv = new TextView(ArticleActivity.this, null);
-                        tv.setText(elements.get(i).text());
-                        tv.setTypeface(null, Typeface.BOLD);
-                        tv.setTextSize(17);
-                        layout.addView(tv);
+                        addText(elements.get(i).text(), strong);
+
 
                         //TEXT - ephazised
-                    } else if (tmp == "em") {
-                        TextView tv = new TextView(ArticleActivity.this, null);
-                        tv.setText(elements.get(i).text());
-                        tv.setTypeface(null, Typeface.ITALIC);
-                        tv.setTextSize(17);
-                        layout.addView(tv);
+                    } else if (tmp == em) {
+                        addText( elements.get(i).text(), em);
 
                         //LINK
-                    } else {
-                        if (tmp == "a") {
-                            //Do nothing
+                    } else if (tmp == "a") {
+                        //Do nothing
 
-                            //TEXT
-                        } else {
+                    }
+
+                    //TEXT
+                     else if ( tmp == "div" || tmp == "p"){
+
+
+                        //TODO: pomysl jeszcze o tym
                             if (i == 0 && elements.size() > 1) {
                                 if (!elements.get(0).text().startsWith(elements.get(1).text())) { //test if the first element contains all
-                                    TextView tv = new JustifyTextView(ArticleActivity.this, null);
-                                    tv.setText(elements.get(i).text());
-                                    tv.setTextSize(17);
-                                    layout.addView(tv);
+                                    addText(elements.get(i).text(), null);
 
                                 }
 
                             } else {
-
-                            TextView tv = new TextView(ArticleActivity.this);
-                            tv.setText(elements.get(i).text());
-                            tv.setTextSize(17);
-                            layout.addView(tv);
-
-
-
-                            }
+                                addText(elements.get(i).text(), null);
 
                         }
-
                     }
                 }
-                mProgressDialog.dismiss();
             }
-            TextView tv = new TextView(ArticleActivity.this);
-            tv.setText("\n \n ");
-            tv.setTextSize(17);
-            layout.addView(tv);
+
         }
     }
+
+
 }
