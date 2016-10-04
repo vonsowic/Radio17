@@ -175,6 +175,11 @@ public class ArticleActivity extends AppCompatActivity {
 
                 elements = result.get(j).getAllElements();
 
+                non_url_text = null; // string for text hidden in <audio></audio> or <img></img>
+                if ( elements.hasText()) {
+                    non_url_text = elements.get(0).text();
+                }
+
                 for (int i = 0; i < elements.size(); i++) {
 
                     String tmp = elements.get(i).tag().toString();
@@ -184,12 +189,19 @@ public class ArticleActivity extends AppCompatActivity {
                         ImageView ib = new ImageView(ArticleActivity.this);
                         imageLoader.displayImage(elements.get(i).absUrl("src"), ib, options);
                         layout.addView(ib);
-                        enter();
+
+                        if (non_url_text != null ){
+                            addText(non_url_text, null);
+                        }
+
+                        i = elements.size(); // go to next result's element
+
 
                         //AUDIO
                     } else if (tmp == "source") {
 
                         if ( elements.get(i).attr("type").startsWith("audio") ) {
+
 
                             final Button button = new Button(ArticleActivity.this);
                             button.setText("PLAY");
@@ -212,6 +224,12 @@ public class ArticleActivity extends AppCompatActivity {
                             layout.addView(button);
                             button.setOnClickListener(buttonListener);
 
+                            if (non_url_text != null ){
+                                addText(non_url_text, null);
+                            }
+
+                            i = elements.size(); // go to next result's element
+
                         }
 
                         //TEXT - strong
@@ -224,9 +242,13 @@ public class ArticleActivity extends AppCompatActivity {
                         addText( elements.get(i).text(), em);
 
                         //LINK
-                    } else if (tmp == "a") {
-                        //Do nothing
+                    } else if (tmp == "a" || tmp == "audio") {
 
+                        if ( non_url_text != null){
+                            if ( non_url_text.startsWith(elements.get(i).text())){
+                                non_url_text = non_url_text.substring(elements.get(i).text().length());
+                            }
+                        }
                     }
 
                     //TEXT
