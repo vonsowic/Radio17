@@ -3,6 +3,7 @@ package com.bearcave.radio17;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -10,12 +11,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -86,8 +89,10 @@ public class ArticleActivity extends AppCompatActivity {
         ProgressDialog mProgressDialog;
         LinearLayout layout;
 
+
         public LoadArticle(int content_article) {
             this.layout = (LinearLayout) findViewById(R.id.articleContent);
+
         }
 
 
@@ -98,22 +103,12 @@ public class ArticleActivity extends AppCompatActivity {
             layout.addView(tv);
         }
 
-        private void addText(String text, String type){
-
+        private void addText(String text){
             TextView tv = new TextView(ArticleActivity.this, null);
-            tv.setText(text);
-
-            if ( type != null){
-                if ( type == "strong") {
-                    tv.setTypeface(null, Typeface.BOLD);
-                } else if (type == "em"){
-                    tv.setTypeface(null, Typeface.ITALIC);
-                }
-            }
-
+            tv.setText(Html.fromHtml(text));
             tv.setTextSize( font_size );
             layout.addView(tv);
-            enter();
+           // enter();
 
         }
 
@@ -160,13 +155,11 @@ public class ArticleActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Elements result) {
 
-
             mProgressDialog.dismiss();
 
             if (result == null) {
                 return;
             }
-
 
             Elements elements;
             String non_url_text = null;
@@ -177,8 +170,22 @@ public class ArticleActivity extends AppCompatActivity {
 
                 non_url_text = null; // string for text hidden in <audio></audio> or <img></img>
                 if ( elements.hasText()) {
-                    non_url_text = elements.get(0).text();
+                    non_url_text = elements.get(0).toString();
                 }
+
+                // Deleting unnecessery elements
+                for (int i = 0; i < elements.size(); i++) {
+                    String tmp = elements.get(i).tag().toString();
+                    if (tmp == "a"  ) {
+                        if ( non_url_text != null){
+                            if ( non_url_text.startsWith(elements.get(i).text())){
+                                non_url_text = non_url_text.substring(elements.get(i).text().length());
+                            }
+                        }
+                    }
+                }
+
+
 
                 for (int i = 0; i < elements.size(); i++) {
 
@@ -187,21 +194,25 @@ public class ArticleActivity extends AppCompatActivity {
                     // IMAGE
                     if (tmp == "img") {
                         ImageView ib = new ImageView(ArticleActivity.this);
+
                         imageLoader.displayImage(elements.get(i).absUrl("src"), ib, options);
                         layout.addView(ib);
+                        ib.setLayoutParams(new LinearLayout.LayoutParams(layout.getWidth(),
+                                300));
 
                         if (non_url_text != null ){
-                            addText(non_url_text, null);
+                            addText(non_url_text);
                         }
 
-                        i = elements.size(); // go to next result's element
+                        if ( !result.get(j).hasClass("gallery")) {
+                            i = elements.size(); // if it is single image, go to next result's element
+                        }
 
 
                         //AUDIO
                     } else if (tmp == "source") {
 
-                        if ( elements.get(i).attr("type").startsWith("audio") ) {
-
+                        if (elements.get(i).attr("type").startsWith("audio")) {
 
                             final Button button = new Button(ArticleActivity.this);
                             button.setText("PLAY");
@@ -224,52 +235,30 @@ public class ArticleActivity extends AppCompatActivity {
                             layout.addView(button);
                             button.setOnClickListener(buttonListener);
 
-                            if (non_url_text != null ){
-                                addText(non_url_text, null);
+                            if (non_url_text != null) {
+                                addText(non_url_text);
                             }
 
                             i = elements.size(); // go to next result's element
 
                         }
-
-                        //TEXT - strong
-                    } else if (tmp == "strong") {
-                        addText(elements.get(i).text(), strong);
-
-
-                        //TEXT - ephazised
-                    } else if (tmp == em) {
-                        addText( elements.get(i).text(), em);
-
-                        //LINK
-                    } else if (tmp == "a" || tmp == "audio") {
-
-                        if ( non_url_text != null){
-                            if ( non_url_text.startsWith(elements.get(i).text())){
-                                non_url_text = non_url_text.substring(elements.get(i).text().length());
-                            }
-                        }
                     }
-
                     //TEXT
-                     else if ( tmp == "div" || tmp == "p"){
-
+                    else if ( tmp == "div" || tmp == "p"){
 
                         //TODO: pomysl jeszcze o tym
-                            if (i == 0 && elements.size() > 1) {
-                                if (!elements.get(0).text().startsWith(elements.get(1).text())) { //test if the first element contains all
-                                    addText(elements.get(i).text(), null);
+                        if (i == 0 && elements.size() > 1) {
+                            if (!elements.get(0).text().startsWith(elements.get(1).text())) { //test if the first element contains all
+                                addText("<"+tmp+">"+elements.get(i).toString()+"</"+tmp+">");
+                            }
 
-                                }
-
-                            } else {
-                                addText(elements.get(i).text(), null);
+                        } else {
+                            addText("<"+tmp+">"+elements.get(i).toString()+"</"+tmp+">");
 
                         }
                     }
                 }
             }
-
         }
     }
 
