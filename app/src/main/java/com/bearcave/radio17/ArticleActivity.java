@@ -12,8 +12,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.Spanned;
 import android.view.Gravity;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -103,13 +105,27 @@ public class ArticleActivity extends AppCompatActivity {
             layout.addView(tv);
         }
 
+        private void enter(int i){
+            TextView tv = new TextView(ArticleActivity.this);
+            tv.setText("\n");
+            tv.setTextSize(font_size);
+            for (; i>0; i--) {
+                layout.addView(tv);
+            }
+        }
+
         private void addText(String text){
             TextView tv = new TextView(ArticleActivity.this, null);
-            tv.setText(Html.fromHtml(text));
+            tv.setText(text+"\n\n");
             tv.setTextSize( font_size );
             layout.addView(tv);
-           // enter();
+        }
 
+        private void addText(Spanned text) {
+            TextView tv = new TextView(ArticleActivity.this, null);
+            tv.setText(text);
+            tv.setTextSize(font_size);
+            layout.addView(tv);
         }
 
         @Override
@@ -119,8 +135,6 @@ public class ArticleActivity extends AppCompatActivity {
             mProgressDialog.setMessage(getString(R.string.loading));
             mProgressDialog.setIndeterminate(false);
             mProgressDialog.show();
-
-
         }
 
         @Override
@@ -155,6 +169,8 @@ public class ArticleActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Elements result) {
 
+            boolean onlyText = true;
+
             mProgressDialog.dismiss();
 
             if (result == null) {
@@ -162,29 +178,25 @@ public class ArticleActivity extends AppCompatActivity {
             }
 
             Elements elements;
-            String non_url_text = null;
 
             for (int j = 0; j < result.size(); j++) {
 
                 elements = result.get(j).getAllElements();
 
-                non_url_text = null; // string for text hidden in <audio></audio> or <img></img>
-                if ( elements.hasText()) {
-                    non_url_text = elements.get(0).toString();
-                }
-
-                // Deleting unnecessery elements
                 for (int i = 0; i < elements.size(); i++) {
                     String tmp = elements.get(i).tag().toString();
-                    if (tmp == "a"  ) {
-                        if ( non_url_text != null){
-                            if ( non_url_text.startsWith(elements.get(i).text())){
-                                non_url_text = non_url_text.substring(elements.get(i).text().length());
-                            }
-                        }
+
+                   if ( tmp == "img") {
+                        onlyText = false;
+                        i = elements.size();
+
+                    } else if ( tmp == "source"){
+
+                        onlyText = false;
+                        i = elements.size();
+                        result.get(j).select("a").remove();
                     }
                 }
-
 
 
                 for (int i = 0; i < elements.size(); i++) {
@@ -197,11 +209,10 @@ public class ArticleActivity extends AppCompatActivity {
 
                         imageLoader.displayImage(elements.get(i).absUrl("src"), ib, options);
                         layout.addView(ib);
-                        ib.setLayoutParams(new LinearLayout.LayoutParams(layout.getWidth(),
-                                300));
 
-                        if (non_url_text != null ){
-                            addText(non_url_text);
+                        // TODO: if there are many images and text, text will be displayed several times
+                        if (result.get(j).hasText() ){
+                            addText(result.get(j).text());
                         }
 
                         if ( !result.get(j).hasClass("gallery")) {
@@ -235,8 +246,8 @@ public class ArticleActivity extends AppCompatActivity {
                             layout.addView(button);
                             button.setOnClickListener(buttonListener);
 
-                            if (non_url_text != null) {
-                                addText(non_url_text);
+                            if (result.get(j).hasText() ){
+                                addText(result.get(j).text());
                             }
 
                             i = elements.size(); // go to next result's element
@@ -244,23 +255,15 @@ public class ArticleActivity extends AppCompatActivity {
                         }
                     }
                     //TEXT
-                    else if ( tmp == "div" || tmp == "p"){
+                    else if ( onlyText ){
 
-                        //TODO: pomysl jeszcze o tym
-                        if (i == 0 && elements.size() > 1) {
-                            if (!elements.get(0).text().startsWith(elements.get(1).text())) { //test if the first element contains all
-                                addText("<"+tmp+">"+elements.get(i).toString()+"</"+tmp+">");
-                            }
+                        addText(Html.fromHtml(result.get(j).toString()));
+                        i = elements.size();
 
-                        } else {
-                            addText("<"+tmp+">"+elements.get(i).toString()+"</"+tmp+">");
-
-                        }
                     }
                 }
+                onlyText = true;
             }
         }
     }
-
-
 }
