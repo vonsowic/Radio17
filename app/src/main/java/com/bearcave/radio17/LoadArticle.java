@@ -8,9 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.text.Html;
-import android.text.Layout;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -37,8 +35,6 @@ public class LoadArticle extends AsyncTask<String, Void, Elements> {
     ProgressDialog mProgressDialog;
     LinearLayout layout;
     Activity activity;
-   // Context context;
-    int content_article_id;
     int font_size;
     DisplayImageOptions options;
     ImageLoader imageLoader;
@@ -48,9 +44,7 @@ public class LoadArticle extends AsyncTask<String, Void, Elements> {
 
     public LoadArticle(Activity activity, LinearLayout layout) {
         this.activity = activity;
-      //  this.layout = (LinearLayout) activity.findViewById(content_article);
         this.layout = layout;
-        //this.content_article_id = content_article;
         font_size = 17;
 
         options = new DisplayImageOptions.Builder()
@@ -187,7 +181,7 @@ public class LoadArticle extends AsyncTask<String, Void, Elements> {
                         for ( int m = 0; m<elements.size(); m++){
                             ImageView ib = new ImageView(activity);
                             imageLoader.displayImage(elements.get(m).select("a").attr("href"), ib, options);
-                            //layout.addView(ib);
+                            layout.addView(ib);
                             enter();
                         }
                     } else {
@@ -238,7 +232,6 @@ public class LoadArticle extends AsyncTask<String, Void, Elements> {
                 } else if ( tmp == "style"){}
                 //TEXT
                 else if ( onlyText ){
-
                     addText(Html.fromHtml(result.get(j).toString()));
                     i = elements.size();
 
