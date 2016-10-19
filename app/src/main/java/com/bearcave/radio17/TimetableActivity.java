@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -82,15 +83,12 @@ public class TimetableActivity extends MainActivity {
         @Override
         protected void onPostExecute(Elements result) {
 
-            Elements elements;
             for ( int i =0; i< result.size(); i++){
-                elements = result.get(i).children();
-                for(int j=0; j<elements.size(); j++){
+
                     TextView tv = new TextView(TimetableActivity.this, null);
-                    tv.setText(elements.get(j).text()+"\n");
+                    tv.setText(Html.fromHtml( result.get(i).toString() ));
                     tv.setTextSize(17);
                     layout.addView(tv);
-                }
 
             }
 

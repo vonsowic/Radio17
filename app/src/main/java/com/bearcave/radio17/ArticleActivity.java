@@ -3,8 +3,6 @@ package com.bearcave.radio17;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -13,32 +11,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
-import android.view.Gravity;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-
-import com.bluejamesbond.text.DocumentView;
-import com.bluejamesbond.text.style.TextAlignment;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-
-import me.biubiubiu.justifytext.library.JustifyTextView;
 
 public class ArticleActivity extends AppCompatActivity {
 
@@ -78,7 +65,6 @@ public class ArticleActivity extends AppCompatActivity {
                 .build();
         imageLoader = ImageLoader.getInstance();
         imageLoader.init(config);
-        //TODO: resize articlePoster
         ImageView poster = (ImageView) findViewById(R.id.articlePoster);
         imageLoader.displayImage(poster_url, poster, options);
         new LoadArticle(R.layout.content_article).execute(url);
@@ -183,42 +169,51 @@ public class ArticleActivity extends AppCompatActivity {
 
                 elements = result.get(j).getAllElements();
 
+                //removing unnecessery text
                 for (int i = 0; i < elements.size(); i++) {
                     String tmp = elements.get(i).tag().toString();
 
                    if ( tmp == "img") {
-                        onlyText = false;
-                        i = elements.size();
-
-                    } else if ( tmp == "source"){
-
-                        onlyText = false;
-                        i = elements.size();
-                        result.get(j).select("a").remove();
-                    }
+                       onlyText = false;
+                       i = elements.size();
+                   } else if ( tmp == "source"){
+                       onlyText = false;
+                       i = elements.size();
+                       result.get(j).select("a").remove();
+                   } else if ( tmp =="style"){
+                       result.get(j).remove();
+                   }
                 }
 
-
+                //displaying result on screen
                 for (int i = 0; i < elements.size(); i++) {
 
                     String tmp = elements.get(i).tag().toString();
 
+
                     // IMAGE
                     if (tmp == "img") {
-                        ImageView ib = new ImageView(ArticleActivity.this);
 
-                        imageLoader.displayImage(elements.get(i).absUrl("src"), ib, options);
-                        layout.addView(ib);
+                        if ( result.get(j).hasClass("gallery")) {
+                            elements = result.get(j).getElementsByClass("gallery-item");
 
-                        // TODO: if there are many images and text, text will be displayed several times
+                            for ( int m = 0; m<elements.size(); m++){
+                                ImageView ib = new ImageView(ArticleActivity.this);
+                                imageLoader.displayImage(elements.get(m).select("a").attr("href"), ib, options);
+                                layout.addView(ib);
+                                enter();
+                            }
+                        } else {
+                            ImageView ib = new ImageView(ArticleActivity.this);
+                            imageLoader.displayImage(elements.get(i).absUrl("src"), ib, options);
+                            layout.addView(ib);
+                        }
+
                         if (result.get(j).hasText() ){
                             addText(result.get(j).text());
                         }
 
-                        if ( !result.get(j).hasClass("gallery")) {
-                            i = elements.size(); // if it is single image, go to next result's element
-                        }
-
+                        i = elements.size(); //  end this elements loop and go to the next result
 
                         //AUDIO
                     } else if (tmp == "source") {
@@ -253,7 +248,7 @@ public class ArticleActivity extends AppCompatActivity {
                             i = elements.size(); // go to next result's element
 
                         }
-                    }
+                    } else if ( tmp == "style"){}
                     //TEXT
                     else if ( onlyText ){
 
