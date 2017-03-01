@@ -42,11 +42,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".RecorderActivity" />
         <activity
-            android:name=".ImageViewActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_image_view"
-            android:theme="@style/FullscreenTheme" />
-        <activity
             android:name=".TimetableActivity"
             android:label="@string/title_activity_timetable"
             android:theme="@style/AppTheme.NoActionBar"></activity>

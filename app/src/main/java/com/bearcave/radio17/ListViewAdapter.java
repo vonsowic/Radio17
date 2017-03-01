@@ -131,8 +131,4 @@ public class ListViewAdapter extends BaseAdapter {
             imagesUrls.add(pom.get(i).attr("href"));
         }
     }
-
-
-
-
 }
