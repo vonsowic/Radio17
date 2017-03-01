@@ -85,6 +85,7 @@ public class ArticleListViewActivity extends MainActivity {
                         ArticleListViewActivity.this,
                         R.string.no_internet_conn_notification,
                         Toast.LENGTH_LONG).show();
+
                 mProgressDialog.dismiss();
                 finish();
                 return;

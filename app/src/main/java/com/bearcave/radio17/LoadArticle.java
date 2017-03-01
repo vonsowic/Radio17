@@ -41,6 +41,8 @@ public class LoadArticle extends AsyncTask<String, Void, Elements> {
     static boolean clicked = false;
     static Intent intent;
 
+    private IOException noInternetConnectionException;
+
 
     public LoadArticle(Activity activity, LinearLayout layout) {
         this.activity = activity;
@@ -49,9 +51,6 @@ public class LoadArticle extends AsyncTask<String, Void, Elements> {
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.logo) // resource or drawable
-                //.showImageForEmptyUri(R.drawable.on_empty_url) // resource or drawable
-                // .showImageOnFail(R.drawable.on_fail) // resource or drawable
-                //  .resetViewBeforeLoading(true)  // default
                 .cacheInMemory(true) // default => false
                 .cacheOnDisk(true) // default => false
                 .build();
@@ -60,7 +59,6 @@ public class LoadArticle extends AsyncTask<String, Void, Elements> {
                 .build();
         imageLoader = ImageLoader.getInstance();
         imageLoader.init(config);
-
     }
 
 
@@ -69,15 +67,6 @@ public class LoadArticle extends AsyncTask<String, Void, Elements> {
         tv.setText("\n");
         tv.setTextSize(font_size);
         layout.addView(tv);
-    }
-
-    private void enter(int i){
-        TextView tv = new TextView(activity);
-        tv.setText("\n");
-        tv.setTextSize(font_size);
-        for (; i>0; i--) {
-            layout.addView(tv);
-        }
     }
 
     private void addText(String text){
@@ -109,25 +98,13 @@ public class LoadArticle extends AsyncTask<String, Void, Elements> {
     protected Elements doInBackground(String... urls) {
 
         Elements postContent = null;
-        ConnectivityManager connMgr = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
-        if (networkInfo != null && networkInfo.isConnected()) {
-            try {
-                Document doc = Jsoup.connect(urls[0]).get();
-                postContent = doc.getElementsByClass("post-content").first().children();
-            } catch (IOException e) {
-                return null;
-            }
-        } else {
-            // display error
-            /*NoInternetConncetionFragment fragment = new NoInternetConncetionFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction =
-                    getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(content_article_id, fragment);
-            fragmentTransaction.commit();*/
+        try {
+            Document doc = Jsoup.connect(urls[0]).get();
+            postContent = doc.getElementsByClass("post-content").first().children();
+        } catch (IOException e) {
+            noInternetConnectionException = e;
         }
-
 
         return postContent;
     }
@@ -137,8 +114,11 @@ public class LoadArticle extends AsyncTask<String, Void, Elements> {
     @Override
     protected void onPostExecute(Elements result) {
 
-        boolean onlyText = true;
+        if ( noInternetConnectionException != null){
+            throw new NoInternetConnectionException();
+        }
 
+        boolean onlyText = true;
         mProgressDialog.dismiss();
 
         if (result == null) {
