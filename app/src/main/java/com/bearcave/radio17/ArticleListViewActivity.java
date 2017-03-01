@@ -3,8 +3,6 @@ package com.bearcave.radio17;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -12,8 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
+import java.io.IOException;
 
 public class ArticleListViewActivity extends MainActivity {
 
@@ -52,6 +54,7 @@ public class ArticleListViewActivity extends MainActivity {
     private class LoadAndPrepareContent extends AsyncTask<String, Void, Document> {
 
         ProgressDialog mProgressDialog;
+        private IOException noInternetConnectionException;  // or another error
 
         @Override
         protected void onPreExecute() {
@@ -64,27 +67,11 @@ public class ArticleListViewActivity extends MainActivity {
 
         @Override
         protected Document doInBackground(String... url) {
-
             Document doc = null;
-
-            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-            if (networkInfo != null && networkInfo.isConnected()) {
-                try {
-                    doc = Jsoup.connect(url[0]).get();
-                }
-                catch(Exception e){
-                    // for example when page doesn't exist
-                }
-
-            } else {
-                // display error
-                NoInternetConncetionFragment fragment = new NoInternetConncetionFragment();
-                android.support.v4.app.FragmentTransaction fragmentTransaction =
-                        getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.frame_container, fragment);
-                fragmentTransaction.commit();
+            try {
+                return Jsoup.connect(url[0]).get();
+            } catch (IOException e) {
+                noInternetConnectionException = e;
             }
 
             return doc;
@@ -93,8 +80,13 @@ public class ArticleListViewActivity extends MainActivity {
         @Override
         protected void onPostExecute(Document result) {
 
-            if ( result == null){
+            if ( noInternetConnectionException != null){
+                Toast.makeText(
+                        ArticleListViewActivity.this,
+                        R.string.no_internet_conn_notification,
+                        Toast.LENGTH_LONG).show();
                 mProgressDialog.dismiss();
+                finish();
                 return;
             }
 
