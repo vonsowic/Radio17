@@ -2,10 +2,7 @@ package com.bearcave.radio17;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.text.Spanned;
@@ -24,6 +21,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.Objects;
 
 
 /**
@@ -135,14 +133,14 @@ public class LoadArticle extends AsyncTask<String, Void, Elements> {
             for (int i = 0; i < elements.size(); i++) {
                 String tmp = elements.get(i).tag().toString();
 
-                if ( tmp == "img") {
+                if (Objects.equals(tmp, "img")) {
                     onlyText = false;
                     i = elements.size();
-                } else if ( tmp == "source"){
+                } else if (Objects.equals(tmp, "source")){
                     onlyText = false;
                     i = elements.size();
                     result.get(j).select("a").remove();
-                } else if ( tmp =="style"){
+                } else if (Objects.equals(tmp, "style")){
                     result.get(j).remove();
                 }
             }
@@ -153,7 +151,7 @@ public class LoadArticle extends AsyncTask<String, Void, Elements> {
                 String tmp = elements.get(i).tag().toString();
 
                 // IMAGE
-                if (tmp == "img") {
+                if (Objects.equals(tmp, "img")) {
 
                     if ( result.get(j).hasClass("gallery")) {
                         elements = result.get(j).getElementsByClass("gallery-item");
@@ -177,12 +175,12 @@ public class LoadArticle extends AsyncTask<String, Void, Elements> {
                     i = elements.size(); //  end this elements loop and go to the next result
 
                     //AUDIO
-                } else if (tmp == "source") {
+                } else if (Objects.equals(tmp, "source")) {
 
                     if (elements.get(i).attr("type").startsWith("audio")) {
 
                         final Button button = new Button(activity);
-                        button.setText("PLAY");
+                        button.setText(R.string.play_button);
                         final String pomUrl = elements.get(i).absUrl("src");
                         View.OnClickListener buttonListener = new View.OnClickListener() {
 
@@ -209,7 +207,7 @@ public class LoadArticle extends AsyncTask<String, Void, Elements> {
                         i = elements.size(); // go to next result's element
 
                     }
-                } else if ( tmp == "style"){}
+                }
                 //TEXT
                 else if ( onlyText ){
                     addText(Html.fromHtml(result.get(j).toString()));
