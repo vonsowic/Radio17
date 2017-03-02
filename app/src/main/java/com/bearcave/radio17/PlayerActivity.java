@@ -30,7 +30,8 @@ public class PlayerActivity extends MainActivity {
     static Intent radioIntent = null;
     static boolean isPlaying = false;
 
-    String url = "http://tolo.me:8000/;";
+    //String url = "http://tolo.me:8000/;";
+    String url = "http://37.187.247.31:8000/;";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class PlayerActivity extends MainActivity {
             @Override
             public void run() {
                 while ( true) {
-                    new LoadTitle((TextView) findViewById(R.id.textTitle)).execute("http://tolo.me:8000/currentsong?sid=1");
+                    new LoadTitle((TextView) findViewById(R.id.textTitle)).execute("http://37.187.247.31:8000/currentsong?sid=1");
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException e) {

@@ -1,4 +1,4 @@
-package com.bearcave.radio17;
+package com.bearcave.radio17.articles;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,7 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import com.bearcave.radio17.NoInternetConnectionException;
+import com.bearcave.radio17.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -33,24 +36,24 @@ public class ArticleActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.logo) // resource or drawable
-                //.showImageForEmptyUri(R.drawable.on_empty_url) // resource or drawable
-                // .showImageOnFail(R.drawable.on_fail) // resource or drawable
-                //  .resetViewBeforeLoading(true)  // default
-                .cacheInMemory(true) // default => false
-                .cacheOnDisk(true) // default => false
+                .showImageOnLoading(R.drawable.logo)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
                 .build();
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(ArticleActivity.this)
                 .build();
+
         imageLoader = ImageLoader.getInstance();
         imageLoader.init(config);
         ImageView poster = (ImageView) findViewById(R.id.articlePoster);
         imageLoader.displayImage(poster_url, poster, options);
-        new LoadArticle(ArticleActivity.this, (LinearLayout)findViewById(R.id.articleContent)).execute(url);
 
+        try {
+            new LoadArticle(ArticleActivity.this, (LinearLayout) findViewById(R.id.articleContent)).execute(url);
+        } catch (NoInternetConnectionException e){
+            Toast.makeText(this, R.string.no_internet_conn_notification, Toast.LENGTH_LONG).show();
+            finish();
+        }
     }
-
-
-
 }

@@ -7,7 +7,7 @@
     android:paddingBottom="1dp"
     android:paddingLeft="1dp"
     android:paddingRight="1dp"
-    tools:context="com.bearcave.radio17.ArticleListViewActivity">
+    tools:context="com.bearcave.radio17.articles.ArticleListViewActivity">
 
     <include layout="@layout/app_bar_main"/>
 

@@ -33,11 +33,11 @@
             android:exported="true" />
 
         <activity
-            android:name=".ArticleListViewActivity"
+            android:name=".articles.ArticleListViewActivity"
             android:label="@string/title_activity_article_list_view"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ArticleActivity"
+            android:name=".articles.ArticleActivity"
             android:label="@string/title_activity_article_list_view"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".RecorderActivity" />

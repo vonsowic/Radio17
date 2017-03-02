@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.bearcave.radio17.articles.LoadArticle;
+
 
 public class TimetableActivity extends MainActivity {
 
