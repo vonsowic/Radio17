@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.bearcave.radio17.list_of_articles.ArticleListViewActivity;
+import com.bearcave.radio17.player.PlayerActivity;
 
 
 public class MainActivity extends AppCompatActivity

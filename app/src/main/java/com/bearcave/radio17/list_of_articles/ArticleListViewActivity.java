@@ -1,4 +1,4 @@
-package com.bearcave.radio17;
+package com.bearcave.radio17.list_of_articles;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.bearcave.radio17.MainActivity;
+import com.bearcave.radio17.R;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

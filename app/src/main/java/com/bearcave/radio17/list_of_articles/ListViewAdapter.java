@@ -1,4 +1,4 @@
-package com.bearcave.radio17;
+package com.bearcave.radio17.list_of_articles;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import com.bearcave.radio17.R;
+import com.bearcave.radio17.articles.ArticleActivity;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -44,9 +46,6 @@ public class ListViewAdapter extends BaseAdapter {
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.logo) // resource or drawable
-                //.showImageForEmptyUri(R.drawable.on_empty_url) // resource or drawable
-               // .showImageOnFail(R.drawable.on_fail) // resource or drawable
-              //  .resetViewBeforeLoading(true)  // default
                 .cacheInMemory(true) // default => false
                 .cacheOnDisk(true) // default => false
                 .build();
@@ -97,7 +96,6 @@ public class ListViewAdapter extends BaseAdapter {
 
             @Override
             public void onClick(View arg0) {
-
                 Intent intent = new Intent(context, ArticleActivity.class);
                 intent.putExtra("article_url", articleUrls.get(position));
                 intent.putExtra("poster_url", imagesUrls.get(position));
@@ -107,15 +105,12 @@ public class ListViewAdapter extends BaseAdapter {
             }
         });
 
-
-
         return itemView;
     }
 
     public void addToLists(Document doc){
-
-
         Elements pom = doc.getElementsByClass("post-title");
+
         for ( int i = 0; i<pom.size(); i++){
             articleTitles.add(pom.get(i).text());
             articleUrls.add(pom.get(i).select("a").attr("href"));
