@@ -8,8 +8,6 @@
     <string name="no_internet_connection">Brak połączenia z siecią</string>
     <string name="title_not_available">Tytuł utworu nie jest dostępny</string>
 
-    <string name="titlear_view">ggg</string>
-
     <string name="player">Odtwarzacz</string>
     <string name="recorder">Nagrywarka</string>
     <string name="timetable">Ramówka</string>
@@ -25,6 +23,8 @@
     <string name="title_activity_article_list_view">ArticleListViewActivity</string>
 
     <string name="radio17_url">http://radio17.pl/</string>
+    <string name="player_url">http://37.187.247.31:8000/;</string>
+
 
     <string-array name="station_names">
         <item>Kanał Główny</item>

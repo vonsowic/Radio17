@@ -1,4 +1,4 @@
-package com.bearcave.radio17.articles;
+package com.bearcave.radio17.list_of_articles;
 
 import android.app.ProgressDialog;
 import android.content.Context;

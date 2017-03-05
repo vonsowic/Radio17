@@ -9,25 +9,21 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 
-import com.bearcave.radio17.NoInternetConnectionException
+import com.bearcave.radio17.exceptions.NoInternetConnectionException
 import com.bearcave.radio17.R
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
-
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
-
 import java.io.IOException
 import java.util.*
 
 
 /**
  * Loads article from url given from parent activity and displays it on screen.
- * @exception NoInternetConnectionException
  * @author Michał Wąsowicz
  */
-
 class LoadArticle(internal val activity: Activity, internal val layout: LinearLayout) : AsyncTask<String, Void, Element>() {
 
     internal val mProgressDialog: ProgressDialog = ProgressDialog(activity)
@@ -49,6 +45,12 @@ class LoadArticle(internal val activity: Activity, internal val layout: LinearLa
         imageLoader.init(config)
 
         tagToViewMap.put("p", this::addText)
+        tagToViewMap.put("strong", this::addText)
+        tagToViewMap.put("b", this::addText)
+        tagToViewMap.put("span", this::addText)
+        tagToViewMap.put("i", this::addText)
+        tagToViewMap.put("div", this::addText)
+        tagToViewMap.put("img", this::addImage)
     }
 
     override fun onPreExecute() {
@@ -71,6 +73,7 @@ class LoadArticle(internal val activity: Activity, internal val layout: LinearLa
 
     /**
      * Checks what is in element postContent and shows that on screen
+     * @exception NoInternetConnectionException
      */
     override fun onPostExecute(result: Element) {
         mProgressDialog.dismiss()
@@ -81,11 +84,19 @@ class LoadArticle(internal val activity: Activity, internal val layout: LinearLa
         extractElement(result)
     }
 
+    // TODO: podzielic layout.addView(getView(element)) na dwie czesci: przed wywolaniem rekurencyjnym i po.
     private fun extractElement(element: Element){
-        var elements = element.children()
-
+        val elements = element.children()
+        addView(element)
         for ( child in elements){
-            layout.addView(getView(child))
+            extractElement(child)
+        }
+    }
+
+    private fun addView(elementView: Element){
+        val view = getView(elementView)
+        if(view != null) {
+            layout.addView(view)
         }
     }
 
@@ -95,7 +106,7 @@ class LoadArticle(internal val activity: Activity, internal val layout: LinearLa
 
     private fun addText(element: Element): View {
         val tv = TextView(activity, null)
-        tv.text = Html.fromHtml(element.toString())
+        tv.text = Html.fromHtml("<${element.tagName()}>${element.ownText()}</${element.tagName()}>")
         tv.textSize = font_size.toFloat()
         return tv
     }

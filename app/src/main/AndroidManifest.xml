@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".PlayerActivity"
+            android:name=".player.PlayerActivity"
             android:label="@string/title_activity_player"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -28,12 +28,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service
-            android:name=".PlayerService"
+            android:name=".player.PlayerService"
             android:enabled="true"
             android:exported="true" />
 
         <activity
-            android:name=".articles.ArticleListViewActivity"
+            android:name=".list_of_articles.ArticleListViewActivity"
             android:label="@string/title_activity_article_list_view"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

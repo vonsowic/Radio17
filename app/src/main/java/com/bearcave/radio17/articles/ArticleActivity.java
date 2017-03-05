@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.bearcave.radio17.NoInternetConnectionException;
+import com.bearcave.radio17.exceptions.NoInternetConnectionException;
 import com.bearcave.radio17.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;

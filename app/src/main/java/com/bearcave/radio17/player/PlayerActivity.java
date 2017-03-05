@@ -1,37 +1,21 @@
-package com.bearcave.radio17;
+package com.bearcave.radio17.player;
 
 
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.bearcave.radio17.MainActivity;
+import com.bearcave.radio17.R;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-
 import java.io.IOException;
 
 public class PlayerActivity extends MainActivity {
-
-    static Intent radioIntent = null;
-    static boolean isPlaying = false;
-
-    //String url = "http://tolo.me:8000/;";
-    String url = "http://37.187.247.31:8000/;";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,48 +41,18 @@ public class PlayerActivity extends MainActivity {
                 }
             }
         }).start();
-
-
-
     }
-
-
-    /* @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.station_main) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
- */
-
 
     public void playRadio(View view) {
-
-        if ( isPlaying ) {
-            stopService(radioIntent);
-            isPlaying = false;
+        if (PlayerService.isPlaying()){
+            PlayerService.pause();
         } else {
-
-            radioIntent = new Intent(this, PlayerService.class);
-            radioIntent.putExtra("audio_src", url);
-            isPlaying = true;
-            startService(radioIntent);
+            try {
+                PlayerService.setAudio(getString(R.string.player_url));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            PlayerService.start();
         }
     }
 
@@ -112,7 +66,7 @@ public class PlayerActivity extends MainActivity {
 
         @Override
         protected String doInBackground(String... urls){
-            Document doc=null;
+            Document doc;
             try {
                 doc = Jsoup.connect(urls[0]).get();
             } catch (IOException e) {
@@ -124,9 +78,6 @@ public class PlayerActivity extends MainActivity {
         @Override
         protected void onPostExecute(String title){
             textView.setText(title);
-
         }
     }
-
-
 }
