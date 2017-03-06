@@ -118,4 +118,10 @@ class LoadArticle(internal val activity: Activity, internal val layout: LinearLa
         imageLoader.displayImage(element.absUrl("src"), ib, options)
         return ib
     }
+
+    private fun addPlayer(element: Element): View{
+        val ib = ImageView(activity)
+        imageLoader.displayImage(element.absUrl("src"), ib, options)
+        return ib
+    }
 }
