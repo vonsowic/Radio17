@@ -22,7 +22,7 @@ public class PlayerActivity extends MainActivity {
         super.onCreate(savedInstanceState);
         LayoutInflater inflater = (LayoutInflater) this
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View contentView = inflater.inflate(R.layout.activity_player, null, false);
+        View contentView = inflater.inflate(R.layout.content_player, null, false);
         drawer.addView(contentView, 0);
 
         TextView textStation = (TextView) findViewById(R.id.stationName);

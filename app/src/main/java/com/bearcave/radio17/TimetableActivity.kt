@@ -16,7 +16,7 @@ class TimetableActivity : MainActivity() {
         super.onCreate(savedInstanceState)
         val inflater = this
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val contentView = inflater.inflate(R.layout.activity_timetable, null, false)
+        val contentView = inflater.inflate(R.layout.content_timetable, null, false)
         drawer.addView(contentView, 0)
 
         var i = intent

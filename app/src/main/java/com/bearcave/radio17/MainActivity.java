@@ -1,15 +1,22 @@
 package com.bearcave.radio17;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.bearcave.radio17.list_of_articles.ArticleListViewActivity;
 import com.bearcave.radio17.player.PlayerActivity;
@@ -19,7 +26,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     protected DrawerLayout drawer;
-    static Intent player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        FragmentManager fm = getFragmentManager();
+        addShowHideListener(R.id.fab_player, fm.findFragmentById(R.id.player_placeholder));
     }
 
     @Override
@@ -61,16 +70,9 @@ public class MainActivity extends AppCompatActivity
                 i = new Intent(this, PlayerActivity.class);
             }
             startActivity(i);
-        } else if (id==R.id.nav_recorder) {
-          //  startActivity(new Intent(this, RecorderActivity.class));
         } else if (id==R.id.nav_timetable) {
             Intent i = new Intent(this, TimetableActivity.class);
             i.putExtra("article_list_category", getString(R.string.timetable));
-            startActivity(i);
-        } else if (id==R.id.nav_whatsnewinmusic) {
-            Intent i = new Intent(this, ArticleListViewActivity.class);
-            i.putExtra("article_list_url", "http://radio17.pl/nowosci-muzyczne/");
-            i.putExtra("article_list_category", getString(R.string.whatsnewinmusic));
             startActivity(i);
         } else if (id==R.id.nav_blog) {
             Intent i = new Intent(this, ArticleListViewActivity.class);
@@ -102,5 +104,22 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    void addShowHideListener(int buttonId, final android.app.Fragment fragment) {
+        final FloatingActionButton button = (FloatingActionButton) findViewById(buttonId);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.setCustomAnimations(android.R.animator.fade_in,
+                        android.R.animator.fade_out);
+                if (fragment.isHidden()) {
+                    ft.show(fragment);
+                } else {
+                    ft.hide(fragment);
+                }
+                ft.commit();
+            }
+        });
     }
 }

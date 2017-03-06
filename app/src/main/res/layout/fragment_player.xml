@@ -4,6 +4,35 @@
     android:layout_height="match_parent"
     tools:context="com.bearcave.radio17.player.PlayerFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1">
 
+        <Button
+            android:text="Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button4" />
+
+        <Button
+            android:text="Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button5" />
+
+        <Button
+            android:text="Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button6" />
+
+        <Button
+            android:text="Button"
+            android:layout_width="77dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/button7"
+            android:layout_weight="0.50" />
+    </LinearLayout>
 </FrameLayout>

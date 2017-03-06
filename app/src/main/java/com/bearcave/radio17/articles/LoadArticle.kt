@@ -49,7 +49,9 @@ class LoadArticle(internal val activity: Activity, internal val layout: LinearLa
         tagToViewMap.put("b", this::addText)
         tagToViewMap.put("span", this::addText)
         tagToViewMap.put("i", this::addText)
+        tagToViewMap.put("em", this::addText)
         tagToViewMap.put("div", this::addText)
+
         tagToViewMap.put("img", this::addImage)
     }
 

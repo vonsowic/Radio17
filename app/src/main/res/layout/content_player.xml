@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.bearcave.radio17.player.PlayerActivity"
-    tools:showIn="@layout/activity_player">
+    tools:showIn="@layout/activity_main">
 
 
 
