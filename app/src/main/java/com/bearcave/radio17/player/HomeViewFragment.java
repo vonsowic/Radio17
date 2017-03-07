@@ -18,9 +18,7 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class HomeViewFragment extends Fragment implements View.OnClickListener{
 
     Thread loadSongTitleThread;
@@ -78,8 +76,9 @@ public class HomeViewFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onPause() {
         super.onPause();
-        /*try {
-            //loadSongTitleThread.wait();
+        /*
+        try {
+            // loadSongTitleThread.wait();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -116,5 +115,4 @@ public class HomeViewFragment extends Fragment implements View.OnClickListener{
             textView.setText(title);
         }
     }
-
 }

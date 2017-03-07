@@ -25,17 +25,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by miwas on 07.09.16.
+ * @author Michał Wąsowicz
  */
 public class ListViewAdapter extends BaseAdapter {
 
     private Context context;
     private LayoutInflater inflater;
 
-    private List<String> articleTitles= new ArrayList<>();
-    private List<String> articleTexts= new ArrayList<>();
-    private List<String> imagesUrls= new ArrayList<>();
-    private List<String> articleUrls= new ArrayList<>();
+    private List<String> articleTitles  =   new ArrayList<>();
+    private List<String> articleTexts   =   new ArrayList<>();
+    private List<String> imagesUrls     =   new ArrayList<>();
+    private List<String> articleUrls    =   new ArrayList<>();
 
     private DisplayImageOptions options;
     private ImageLoader imageLoader;
@@ -48,15 +48,11 @@ public class ListViewAdapter extends BaseAdapter {
                 .cacheInMemory(true) // default => false
                 .cacheOnDisk(true) // default => false
                 .build();
-
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this.context)
                 .build();
         imageLoader = ImageLoader.getInstance();
         imageLoader.init(config);
-
     }
-
-
 
     @Override
     public int getCount() {
@@ -74,22 +70,17 @@ public class ListViewAdapter extends BaseAdapter {
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
-        TextView title;
-        TextView articleText;
-        ImageView articlePhoto;
-
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View itemView = inflater.inflate(R.layout.listview_item, parent, false);
 
-        title = (TextView) itemView.findViewById(R.id.textTitle);
-        articleText = (TextView) itemView.findViewById(R.id.textArticle);
-        articlePhoto = (ImageView) itemView.findViewById(R.id.imagePoster);
-
+        TextView title = (TextView) itemView.findViewById(R.id.textTitle);
         title.setText(articleTitles.get(position));
+
+        TextView articleText = (TextView) itemView.findViewById(R.id.textArticle);
         articleText.setText(articleTexts.get(position));
 
-
+        ImageView articlePhoto = (ImageView) itemView.findViewById(R.id.imagePoster);
         imageLoader.displayImage(imagesUrls.get(position), articlePhoto, options);
 
         itemView.setOnClickListener(new View.OnClickListener() {

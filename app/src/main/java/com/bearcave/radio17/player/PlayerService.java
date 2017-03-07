@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public final class PlayerService extends Service implements MediaPlayer.OnPreparedListener {
 
-    private static String AUDIO_URL = "http://37.187.247.31:8000/;";
+    private static String AUDIO_URL = null;
     private final static MediaPlayer mediaPlayer = new MediaPlayer();
 
     private PlayerService() {
@@ -49,27 +49,12 @@ public final class PlayerService extends Service implements MediaPlayer.OnPrepar
     }
 
     @Override
-    public void onPrepared(MediaPlayer mp) {
+    public void onPrepared(MediaPlayer mp) {  // called after prepareAsync()
         mediaPlayer.start();
     }
 
     public static void setAudio(String src)  {
-        if(Objects.equals(src, AUDIO_URL)){
-            return ;
-        }
-
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.stop();
-            mediaPlayer.reset();
-        }
-
         AUDIO_URL = src;
-
-        try {
-            prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public static void pause(){

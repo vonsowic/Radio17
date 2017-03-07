@@ -39,10 +39,12 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        // add fragement player to player placeholder(Sliding layout in main view)
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.player_placeholder, new PlayerFragment());
         ft.commit();
 
+        // initialize map with fragements used in navigation drawer
         fragmentMap.put(R.id.nav_player, new HomeViewFragment());
         fragmentMap.put(R.id.nav_timetable, new TimetableFragment());
         fragmentMap.put(R.id.nav_information, new ArticleListViewFragment());
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity
         fragmentMap.put(R.id.nav_blog, new ArticleListViewFragment());
         fragmentMap.put(R.id.nav_news, new ArticleListViewFragment());
 
+        // show HomeViewFragment on start
         displaySelectedScreen(R.id.nav_player);
     }
 
