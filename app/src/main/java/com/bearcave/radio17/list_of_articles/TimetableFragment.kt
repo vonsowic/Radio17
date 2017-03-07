@@ -16,11 +16,8 @@ import com.bearcave.radio17.exceptions.NoInternetConnectionException
 /**
  * A simple [Fragment] subclass.
  */
-class TimetableFragment(title: String) : Fragment() {
+class TimetableFragment : Fragment() {
 
-    init {
-        val title = title
-    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

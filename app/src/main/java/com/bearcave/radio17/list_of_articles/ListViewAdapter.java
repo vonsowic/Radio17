@@ -49,11 +49,11 @@ public class ListViewAdapter extends BaseAdapter {
                 .cacheOnDisk(true) // default => false
                 .build();
 
-      /*  ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this.context)
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this.context)
                 .build();
         imageLoader = ImageLoader.getInstance();
         imageLoader.init(config);
-        */
+
     }
 
 
@@ -108,7 +108,7 @@ public class ListViewAdapter extends BaseAdapter {
     }
 
     public void addToLists(Document doc){
-        Elements posts = doc.children();
+        Elements posts = doc.getElementById("posts-container").children();
         for (Element post:posts){
             articleTitles.add(post.getElementsByClass("post-title").first().text());
             articleUrls.add(post.getElementsByClass("post-title").first().select("a").attr("href"));

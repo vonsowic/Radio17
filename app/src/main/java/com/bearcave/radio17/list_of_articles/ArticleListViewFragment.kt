@@ -24,8 +24,6 @@ import java.io.IOException
  */
 class ArticleListViewFragment : Fragment() {
 
-    internal val adapter = ListViewAdapter(context)
-    //internal val listView = activity.findViewById(R.id.listView) as ListView?
     internal var listView: ListView? = null
     internal val url = "http://radio17.pl/category/aktualnosci/"
     internal var page = 1
@@ -43,6 +41,8 @@ class ArticleListViewFragment : Fragment() {
 
         internal var mProgressDialog = ProgressDialog(context)
         private var noInternetConnectionException: IOException? = null  // or another error
+        internal val adapter = ListViewAdapter(context)
+
 
         override fun onPreExecute() {
             super.onPreExecute()
@@ -76,7 +76,7 @@ class ArticleListViewFragment : Fragment() {
             }
 
             adapter.addToLists(result)
-            //adapter.notifyDataSetChanged()
+            adapter.notifyDataSetChanged()
 
             listView?.setOnScrollListener(object : AbsListView.OnScrollListener {
 

@@ -36,6 +36,6 @@
     <FrameLayout
         android:id="@+id/player_placeholder"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

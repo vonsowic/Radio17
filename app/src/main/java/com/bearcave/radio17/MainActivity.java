@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         fragmentMap.put(R.id.nav_player, new HomeViewFragment());
-        fragmentMap.put(R.id.nav_timetable, new TimetableFragment(getString(R.string.timetable)));
+        fragmentMap.put(R.id.nav_timetable, new TimetableFragment());
         fragmentMap.put(R.id.nav_information, new ArticleListViewFragment());
 
         displaySelectedScreen(R.id.nav_player);
