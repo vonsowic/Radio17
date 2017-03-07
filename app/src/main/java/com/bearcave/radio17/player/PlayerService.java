@@ -6,17 +6,22 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.IBinder;
-
 import java.io.IOException;
 import java.util.Objects;
 
-public final class PlayerService extends Service {
+public final class PlayerService extends Service implements MediaPlayer.OnPreparedListener {
 
-    private static String AUDIO_URL = null;
+    private static String AUDIO_URL = "http://37.187.247.31:8000/;";
     private final static MediaPlayer mediaPlayer = new MediaPlayer();
 
     private PlayerService() {
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+        try {
+            prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -31,20 +36,24 @@ public final class PlayerService extends Service {
         try {
            prepare();
         } catch (IOException e) {
-            return Service.START_NOT_STICKY;
+            return Service.START_NOT_STICKY;  // TODO: ?????
         }
 
-        mediaPlayer.start();
         return super.onStartCommand(intent,flags,startId);
     }
 
     @Override
     public void onDestroy() {
-        mediaPlayer.stop();
+        mediaPlayer.release();
         super.onDestroy();
     }
 
-    public static void setAudio(String src) throws IOException {
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        mediaPlayer.start();
+    }
+
+    public static void setAudio(String src)  {
         if(Objects.equals(src, AUDIO_URL)){
             return ;
         }
@@ -53,13 +62,14 @@ public final class PlayerService extends Service {
             mediaPlayer.stop();
             mediaPlayer.reset();
         }
-        AUDIO_URL = src;
-        prepare();
-    }
 
-    public static void prepare() throws IOException {
-        mediaPlayer.setDataSource(AUDIO_URL);
-        mediaPlayer.prepare();
+        AUDIO_URL = src;
+
+        try {
+            prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void pause(){
@@ -70,7 +80,20 @@ public final class PlayerService extends Service {
         mediaPlayer.start();
     }
 
-    public static boolean isPlaying(){
+    public static void playPause() {
+        if(isPlaying()){
+            pause();
+        } else {
+            start();
+        }
+    }
+
+    private static void prepare() throws IOException {
+        mediaPlayer.setDataSource(AUDIO_URL);
+        mediaPlayer.prepare();
+    }
+
+    private static boolean isPlaying(){
         return mediaPlayer.isPlaying();
     }
 }

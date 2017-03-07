@@ -39,9 +39,7 @@ public class ListViewAdapter extends BaseAdapter {
     DisplayImageOptions options;
     ImageLoader imageLoader;
 
-    public ListViewAdapter(Context context, Document doc) {
-
-        addToLists(doc);
+    public ListViewAdapter(Context context) {
         this.context = context;
 
         options = new DisplayImageOptions.Builder()
@@ -53,8 +51,9 @@ public class ListViewAdapter extends BaseAdapter {
                 .build();
         imageLoader = ImageLoader.getInstance();
         imageLoader.init(config);
-
     }
+
+
 
     @Override
     public int getCount() {
