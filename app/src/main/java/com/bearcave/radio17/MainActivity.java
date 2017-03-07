@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import com.bearcave.radio17.list_of_articles.ArticleListViewFragment;
 import com.bearcave.radio17.list_of_articles.TimetableFragment;
 import com.bearcave.radio17.player.HomeViewFragment;
+import com.bearcave.radio17.player.PlayerFragment;
 
 import java.util.HashMap;
 
@@ -38,9 +39,17 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.player_placeholder, new PlayerFragment());
+        ft.commit();
+
         fragmentMap.put(R.id.nav_player, new HomeViewFragment());
         fragmentMap.put(R.id.nav_timetable, new TimetableFragment());
         fragmentMap.put(R.id.nav_information, new ArticleListViewFragment());
+        fragmentMap.put(R.id.nav_parties, new ArticleListViewFragment());
+        fragmentMap.put(R.id.nav_podcast, new ArticleListViewFragment());
+        fragmentMap.put(R.id.nav_blog, new ArticleListViewFragment());
+        fragmentMap.put(R.id.nav_news, new ArticleListViewFragment());
 
         displaySelectedScreen(R.id.nav_player);
     }
