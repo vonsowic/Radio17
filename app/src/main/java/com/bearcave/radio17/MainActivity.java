@@ -15,8 +15,12 @@ import com.bearcave.radio17.list_of_articles.ArticleListViewFragment;
 import com.bearcave.radio17.list_of_articles.TimetableFragment;
 import com.bearcave.radio17.player.HomeViewFragment;
 
+import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    HashMap<Integer, Fragment> fragmentMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +37,10 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        fragmentMap.put(R.id.nav_player, new HomeViewFragment());
+        fragmentMap.put(R.id.nav_timetable, new TimetableFragment(getString(R.string.timetable)));
+        fragmentMap.put(R.id.nav_information, new ArticleListViewFragment());
 
         displaySelectedScreen(R.id.nav_player);
     }
@@ -59,27 +67,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void displaySelectedScreen(int itemId) {
-        //creating fragment object
-        Fragment fragment = null;
-
-        //initializing the fragment object which is selected
-        switch (itemId) {
-            case R.id.nav_player:
-                fragment = new HomeViewFragment();
-                break;
-            case R.id.nav_timetable:
-                fragment = new TimetableFragment();
-                break;
-            case R.id.nav_information:
-                fragment = new ArticleListViewFragment();
-                break;
-        }
-
-        //replacing the fragment
-        if (fragment != null) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.content_frame, fragment);
-            ft.commit();
-        }
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_frame, fragmentMap.get(itemId));
+        ft.commit();
     }
 }

@@ -13,6 +13,7 @@ import android.widget.ListView
 import android.widget.Toast
 
 import com.bearcave.radio17.R
+import com.bearcave.radio17.exceptions.NoInternetConnectionException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.IOException
@@ -24,21 +25,20 @@ import java.io.IOException
 class ArticleListViewFragment : Fragment() {
 
     internal val adapter = ListViewAdapter(context)
-    internal var listview = activity.findViewById(R.id.listView) as ListView?
-
+    //internal val listView = activity.findViewById(R.id.listView) as ListView?
+    internal var listView: ListView? = null
     internal val url = "http://radio17.pl/category/aktualnosci/"
-    internal var page = 2
-    internal var isLoading = false
+    internal var page = 1
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_article_list_view, container, false)
-        LoadAndPrepareContent().execute(url)
+        listView = view?.findViewById(R.id.listView) as ListView?
 
+        LoadAndPrepareContent().execute(url)
         return view
     }
 
-    //////////////////////////////////////////////////////////////////////////////////
     private open inner class LoadAndPrepareContent : AsyncTask<String, Void, Document?>() {
 
         internal var mProgressDialog = ProgressDialog(context)
@@ -63,6 +63,7 @@ class ArticleListViewFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Document?) {
+            mProgressDialog.dismiss()
 
             if (noInternetConnectionException != null) {
                 Toast.makeText(
@@ -70,13 +71,16 @@ class ArticleListViewFragment : Fragment() {
                         R.string.no_internet_conn_notification,
                         Toast.LENGTH_LONG).show()
 
-                mProgressDialog.dismiss()
                 activity.finish()
                 return
             }
 
             adapter.addToLists(result)
-            listview?.setOnScrollListener(object : AbsListView.OnScrollListener {
+            //adapter.notifyDataSetChanged()
+
+            listView?.setOnScrollListener(object : AbsListView.OnScrollListener {
+
+                internal var isLoading = false
 
                 override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {
 
@@ -84,34 +88,16 @@ class ArticleListViewFragment : Fragment() {
 
                 override fun onScroll(view: AbsListView, firstVisibleItem: Int,
                                       visibleItemCount: Int, totalItemCount: Int) {
+                    if (firstVisibleItem + visibleItemCount == adapter.count
+                            && !isLoading) {
 
-
-                    if (firstVisibleItem + visibleItemCount == adapter.getCount() && !isLoading) {
                         isLoading = true
-                        LoadAddContent().execute(url + "page/" + page)
-                        page++
+                        LoadAndPrepareContent().execute(url + "page/" + ++page)
                     }
-
                 }
             })
-            listview?.adapter = adapter
-            mProgressDialog.dismiss()
+
+            listView?.adapter = adapter
         }
     }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private inner class LoadAddContent : LoadAndPrepareContent() {
-
-        override fun onPostExecute(result: Document?) {
-            if (result == null) {
-                mProgressDialog.dismiss()
-                return
-            }
-            adapter.addToLists(result)
-            adapter.notifyDataSetChanged()
-            mProgressDialog.dismiss()
-            isLoading = false
-        }
-    }
-
 }

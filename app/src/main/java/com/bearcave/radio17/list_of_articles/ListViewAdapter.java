@@ -18,6 +18,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
@@ -28,16 +29,16 @@ import java.util.List;
  */
 public class ListViewAdapter extends BaseAdapter {
 
-    Context context;
-    LayoutInflater inflater;
+    private Context context;
+    private LayoutInflater inflater;
 
-    List<String> articleTitles= new ArrayList<>();
-    List<String> articleTexts= new ArrayList<>();
-    List<String> imagesUrls= new ArrayList<>();
-    List<String> articleUrls= new ArrayList<>();
+    private List<String> articleTitles= new ArrayList<>();
+    private List<String> articleTexts= new ArrayList<>();
+    private List<String> imagesUrls= new ArrayList<>();
+    private List<String> articleUrls= new ArrayList<>();
 
-    DisplayImageOptions options;
-    ImageLoader imageLoader;
+    private DisplayImageOptions options;
+    private ImageLoader imageLoader;
 
     public ListViewAdapter(Context context) {
         this.context = context;
@@ -47,10 +48,12 @@ public class ListViewAdapter extends BaseAdapter {
                 .cacheInMemory(true) // default => false
                 .cacheOnDisk(true) // default => false
                 .build();
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this.context)
+
+      /*  ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this.context)
                 .build();
         imageLoader = ImageLoader.getInstance();
         imageLoader.init(config);
+        */
     }
 
 
@@ -71,8 +74,6 @@ public class ListViewAdapter extends BaseAdapter {
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
-
-
         TextView title;
         TextView articleText;
         ImageView articlePhoto;
@@ -96,11 +97,10 @@ public class ListViewAdapter extends BaseAdapter {
             @Override
             public void onClick(View arg0) {
                 Intent intent = new Intent(context, ArticleActivity.class);
-                intent.putExtra("article_url", articleUrls.get(position));
-                intent.putExtra("poster_url", imagesUrls.get(position));
-                intent.putExtra("article_title", articleTitles.get(position));
+                intent.putExtra("article_url",      articleUrls.get(position));
+                intent.putExtra("poster_url",       imagesUrls.get(position));
+                intent.putExtra("article_title",    articleTitles.get(position));
                 context.startActivity(intent);
-
             }
         });
 
@@ -108,21 +108,12 @@ public class ListViewAdapter extends BaseAdapter {
     }
 
     public void addToLists(Document doc){
-        Elements pom = doc.getElementsByClass("post-title");
-
-        for ( int i = 0; i<pom.size(); i++){
-            articleTitles.add(pom.get(i).text());
-            articleUrls.add(pom.get(i).select("a").attr("href"));
-        }
-
-        pom = doc.getElementsByClass("excerpt-container");
-        for ( int i = 0; i<pom.size(); i++){
-            articleTexts.add(pom.get(i).text());
-        }
-
-        pom = doc.getElementsByClass("gallery-icon");
-        for ( int i = 0; i<pom.size(); i++){
-            imagesUrls.add(pom.get(i).attr("href"));
+        Elements posts = doc.children();
+        for (Element post:posts){
+            articleTitles.add(post.getElementsByClass("post-title").first().text());
+            articleUrls.add(post.getElementsByClass("post-title").first().select("a").attr("href"));
+            articleTexts.add(post.getElementsByClass("excerpt-container").first().text());
+            imagesUrls.add(post.getElementsByClass("gallery-icon").first().attr("href"));
         }
     }
 }

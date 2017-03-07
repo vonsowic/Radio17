@@ -6,7 +6,7 @@
     android:paddingBottom="1dp"
     android:paddingLeft="1dp"
     android:paddingRight="1dp"
-    tools:context=".list_of_articles.ArticleListViewFragment">
+    tools:context="com.bearcave.radio17.list_of_articles.ArticleListViewFragment">
 
     <ListView
         android:layout_width="wrap_content"

@@ -72,17 +72,18 @@ public class HomeViewFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-        loadSongTitleThread.start();
+        //loadSongTitleThread.start();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        try {
-            loadSongTitleThread.wait();
+        /*try {
+            //loadSongTitleThread.wait();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        */
     }
 
     @Override

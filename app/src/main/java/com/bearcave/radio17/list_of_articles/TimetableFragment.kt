@@ -16,15 +16,18 @@ import com.bearcave.radio17.exceptions.NoInternetConnectionException
 /**
  * A simple [Fragment] subclass.
  */
-class TimetableFragment : Fragment() {
+class TimetableFragment(title: String) : Fragment() {
 
+    init {
+        val title = title
+    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_timetable, container, false)
 
         try {
-            //LoadArticle(activity, (activity.findViewById(R.id.timetable_content) as LinearLayout?)!!).execute("http://radio17.pl/ramowka/")
+            LoadArticle(context , (view.findViewById(R.id.timetable_content) as LinearLayout?)!!).execute("http://radio17.pl/ramowka/")
         } catch (e: NoInternetConnectionException){
             Toast.makeText(context, R.string.no_internet_conn_notification, Toast.LENGTH_LONG).show()
         }
