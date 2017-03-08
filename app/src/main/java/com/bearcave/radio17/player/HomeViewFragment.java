@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bearcave.radio17.R;
 
@@ -47,8 +48,12 @@ public class HomeViewFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.home_button_listen:
-                PlayerService.setAudio(getString(R.string.player_url));
-                PlayerService.playPause();
+                Player.setAudio(getString(R.string.player_url));
+                try {
+                    Player.playPause();
+                } catch (IOException e) {
+                    Toast.makeText(getContext(), "error", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }

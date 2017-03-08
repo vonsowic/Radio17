@@ -26,12 +26,15 @@ class ArticleListViewFragment : Fragment() {
 
     internal var listView: ListView? = null
     internal val url = "http://radio17.pl/category/aktualnosci/"
+    internal var adapter : ListViewAdapter? = null
+
     internal var page = 1
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_article_list_view, container, false)
         listView = view?.findViewById(R.id.listView) as ListView?
+        adapter = ListViewAdapter(context)
 
         LoadAndPrepareContent().execute(url)
         return view
@@ -41,7 +44,7 @@ class ArticleListViewFragment : Fragment() {
 
         internal var mProgressDialog = ProgressDialog(context)
         private var noInternetConnectionException: IOException? = null  // or another error
-        internal val adapter = ListViewAdapter(context)
+        internal var isLoading = false
 
 
         override fun onPreExecute() {
@@ -75,12 +78,14 @@ class ArticleListViewFragment : Fragment() {
                 return
             }
 
-            adapter.addToLists(result)
-            adapter.notifyDataSetChanged()
+            adapter?.addToLists(result)
+
+            if(page>1){
+                adapter?.notifyDataSetChanged()
+                isLoading = false
+            }
 
             listView?.setOnScrollListener(object : AbsListView.OnScrollListener {
-
-                internal var isLoading = false
 
                 override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {
 
@@ -88,7 +93,7 @@ class ArticleListViewFragment : Fragment() {
 
                 override fun onScroll(view: AbsListView, firstVisibleItem: Int,
                                       visibleItemCount: Int, totalItemCount: Int) {
-                    if (firstVisibleItem + visibleItemCount == adapter.count
+                    if (firstVisibleItem + visibleItemCount == adapter?.count
                             && !isLoading) {
 
                         isLoading = true

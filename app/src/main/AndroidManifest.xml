@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
 
         <service
-            android:name=".player.PlayerService"
+            android:name=".player.Player"
             android:enabled="true"
             android:exported="true" />
 

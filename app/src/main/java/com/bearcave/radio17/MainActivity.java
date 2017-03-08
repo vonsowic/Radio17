@@ -1,20 +1,27 @@
 package com.bearcave.radio17;
 
+import android.app.SearchManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.bearcave.radio17.list_of_articles.ArticleListViewFragment;
 import com.bearcave.radio17.list_of_articles.TimetableFragment;
 import com.bearcave.radio17.player.HomeViewFragment;
 import com.bearcave.radio17.player.PlayerFragment;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.HashMap;
 
@@ -30,21 +37,41 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // add fragement player to player placeholder(Sliding layout in main view)
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        // add fragment player to player placeholder(Sliding layout in main view)
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.player_placeholder, new PlayerFragment());
         ft.commit();
 
-        // initialize map with fragements used in navigation drawer
+        final SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        slidingUpPanelLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("HEHLLLLLLLL");
+                slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            }
+        });
+
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_showing_player);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.HIDDEN)
+                    slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                else
+                    slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+            }
+        });
+
+        // initialize map with fragments used in navigation drawer
         fragmentMap.put(R.id.nav_player, new HomeViewFragment());
         fragmentMap.put(R.id.nav_timetable, new TimetableFragment());
         fragmentMap.put(R.id.nav_information, new ArticleListViewFragment());
@@ -65,6 +92,16 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        // Retrieve the SearchView and plug it into SearchManager
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        return true;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
