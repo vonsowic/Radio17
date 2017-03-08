@@ -1,9 +1,40 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/player_fragment"
     tools:context="com.bearcave.radio17.player.PlayerFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+
+
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ikona_radio17"
+            android:id="@+id/player_home_station_button" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_media_play"
+            android:id="@+id/player_play_button"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_media_pause"
+            android:id="@+id/player_pause_button"
+            />
+
+
+    </LinearLayout>
+
 
 </FrameLayout>

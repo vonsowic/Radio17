@@ -18,30 +18,29 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by miwas on 07.09.16.
+ * @author Michał Wąsowicz
  */
 public class ListViewAdapter extends BaseAdapter {
 
-    Context context;
-    LayoutInflater inflater;
+    private Context context;
+    private LayoutInflater inflater;
 
-    List<String> articleTitles= new ArrayList<>();
-    List<String> articleTexts= new ArrayList<>();
-    List<String> imagesUrls= new ArrayList<>();
-    List<String> articleUrls= new ArrayList<>();
+    private List<String> articleTitles  =   new ArrayList<>();
+    private List<String> articleTexts   =   new ArrayList<>();
+    private List<String> imagesUrls     =   new ArrayList<>();
+    private List<String> articleUrls    =   new ArrayList<>();
 
-    DisplayImageOptions options;
-    ImageLoader imageLoader;
+    private DisplayImageOptions options;
+    private ImageLoader imageLoader;
 
-    public ListViewAdapter(Context context, Document doc) {
-
-        addToLists(doc);
+    public ListViewAdapter(Context context) {
         this.context = context;
 
         options = new DisplayImageOptions.Builder()
@@ -53,7 +52,6 @@ public class ListViewAdapter extends BaseAdapter {
                 .build();
         imageLoader = ImageLoader.getInstance();
         imageLoader.init(config);
-
     }
 
     @Override
@@ -72,24 +70,17 @@ public class ListViewAdapter extends BaseAdapter {
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
-
-
-        TextView title;
-        TextView articleText;
-        ImageView articlePhoto;
-
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View itemView = inflater.inflate(R.layout.listview_item, parent, false);
 
-        title = (TextView) itemView.findViewById(R.id.textTitle);
-        articleText = (TextView) itemView.findViewById(R.id.textArticle);
-        articlePhoto = (ImageView) itemView.findViewById(R.id.imagePoster);
-
+        TextView title = (TextView) itemView.findViewById(R.id.textTitle);
         title.setText(articleTitles.get(position));
+
+        TextView articleText = (TextView) itemView.findViewById(R.id.textArticle);
         articleText.setText(articleTexts.get(position));
 
-
+        ImageView articlePhoto = (ImageView) itemView.findViewById(R.id.imagePoster);
         imageLoader.displayImage(imagesUrls.get(position), articlePhoto, options);
 
         itemView.setOnClickListener(new View.OnClickListener() {
@@ -97,11 +88,10 @@ public class ListViewAdapter extends BaseAdapter {
             @Override
             public void onClick(View arg0) {
                 Intent intent = new Intent(context, ArticleActivity.class);
-                intent.putExtra("article_url", articleUrls.get(position));
-                intent.putExtra("poster_url", imagesUrls.get(position));
-                intent.putExtra("article_title", articleTitles.get(position));
+                intent.putExtra("article_url",      articleUrls.get(position));
+                intent.putExtra("poster_url",       imagesUrls.get(position));
+                intent.putExtra("article_title",    articleTitles.get(position));
                 context.startActivity(intent);
-
             }
         });
 
@@ -109,21 +99,12 @@ public class ListViewAdapter extends BaseAdapter {
     }
 
     public void addToLists(Document doc){
-        Elements pom = doc.getElementsByClass("post-title");
-
-        for ( int i = 0; i<pom.size(); i++){
-            articleTitles.add(pom.get(i).text());
-            articleUrls.add(pom.get(i).select("a").attr("href"));
-        }
-
-        pom = doc.getElementsByClass("excerpt-container");
-        for ( int i = 0; i<pom.size(); i++){
-            articleTexts.add(pom.get(i).text());
-        }
-
-        pom = doc.getElementsByClass("gallery-icon");
-        for ( int i = 0; i<pom.size(); i++){
-            imagesUrls.add(pom.get(i).attr("href"));
+        Elements posts = doc.getElementById("posts-container").children();
+        for (Element post:posts){
+            articleTitles.add(post.getElementsByClass("post-title").first().text());
+            articleUrls.add(post.getElementsByClass("post-title").first().select("a").attr("href"));
+            articleTexts.add(post.getElementsByClass("excerpt-container").first().text());
+            imagesUrls.add(post.getElementsByClass("gallery-icon").first().attr("href"));
         }
     }
 }

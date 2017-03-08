@@ -2,6 +2,7 @@ package com.bearcave.radio17.articles
 
 import android.app.Activity
 import android.app.ProgressDialog
+import android.content.Context
 import android.os.AsyncTask
 import android.text.Html
 import android.view.View
@@ -24,9 +25,9 @@ import java.util.*
  * Loads article from url given from parent activity and displays it on screen.
  * @author Michał Wąsowicz
  */
-class LoadArticle(internal val activity: Activity, internal val layout: LinearLayout) : AsyncTask<String, Void, Element>() {
+class LoadArticle(internal val context: Context, internal val layout: LinearLayout) : AsyncTask<String, Void, Element>() {
 
-    internal val mProgressDialog: ProgressDialog = ProgressDialog(activity)
+    internal val mProgressDialog: ProgressDialog = ProgressDialog(context)
     internal val font_size: Int = 17
     internal val options: DisplayImageOptions = DisplayImageOptions.Builder()
             .showImageOnLoading(R.drawable.logo)
@@ -40,7 +41,7 @@ class LoadArticle(internal val activity: Activity, internal val layout: LinearLa
 
 
     init {
-        val config = ImageLoaderConfiguration.Builder(activity)
+        val config = ImageLoaderConfiguration.Builder(context)
                 .build()
         imageLoader.init(config)
 
@@ -49,13 +50,15 @@ class LoadArticle(internal val activity: Activity, internal val layout: LinearLa
         tagToViewMap.put("b", this::addText)
         tagToViewMap.put("span", this::addText)
         tagToViewMap.put("i", this::addText)
+        tagToViewMap.put("em", this::addText)
         tagToViewMap.put("div", this::addText)
+
         tagToViewMap.put("img", this::addImage)
     }
 
     override fun onPreExecute() {
         super.onPreExecute()
-        mProgressDialog.setMessage(activity.getString(R.string.loading))
+        mProgressDialog.setMessage(context.getString(R.string.loading))
         mProgressDialog.isIndeterminate = false
         mProgressDialog.show()
     }
@@ -105,14 +108,20 @@ class LoadArticle(internal val activity: Activity, internal val layout: LinearLa
     }
 
     private fun addText(element: Element): View {
-        val tv = TextView(activity, null)
+        val tv = TextView(context)
         tv.text = Html.fromHtml("<${element.tagName()}>${element.ownText()}</${element.tagName()}>")
         tv.textSize = font_size.toFloat()
         return tv
     }
 
     private fun addImage(element: Element): View{
-        val ib = ImageView(activity)
+        val ib = ImageView(context)
+        imageLoader.displayImage(element.absUrl("src"), ib, options)
+        return ib
+    }
+
+    private fun addPlayer(element: Element): View{
+        val ib = ImageView(context)
         imageLoader.displayImage(element.absUrl("src"), ib, options)
         return ib
     }
