@@ -36,7 +36,14 @@ class ArticleListViewFragment : Fragment() {
         listView = view?.findViewById(R.id.listView) as ListView?
         adapter = ListViewAdapter(context)
 
-        LoadAndPrepareContent().execute(url)
+        try {
+            LoadAndPrepareContent().execute(url)
+        } catch (e: NoInternetConnectionException){
+            Toast.makeText(
+                    context,
+                    R.string.no_internet_conn_notification,
+                    Toast.LENGTH_LONG).show()
+        }
         return view
     }
 
@@ -69,13 +76,7 @@ class ArticleListViewFragment : Fragment() {
             mProgressDialog.dismiss()
 
             if (noInternetConnectionException != null) {
-                Toast.makeText(
-                        context,
-                        R.string.no_internet_conn_notification,
-                        Toast.LENGTH_LONG).show()
-
-                activity.finish()
-                return
+                throw NoInternetConnectionException()
             }
 
             adapter?.addToLists(result)
@@ -83,13 +84,13 @@ class ArticleListViewFragment : Fragment() {
             if(page>1){
                 adapter?.notifyDataSetChanged()
                 isLoading = false
+            } else {
+                listView?.adapter = adapter
             }
 
             listView?.setOnScrollListener(object : AbsListView.OnScrollListener {
 
-                override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {
-
-                }
+                override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {}
 
                 override fun onScroll(view: AbsListView, firstVisibleItem: Int,
                                       visibleItemCount: Int, totalItemCount: Int) {
@@ -101,8 +102,6 @@ class ArticleListViewFragment : Fragment() {
                     }
                 }
             })
-
-            listView?.adapter = adapter
         }
     }
 }
