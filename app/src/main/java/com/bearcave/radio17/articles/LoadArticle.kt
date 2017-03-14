@@ -29,6 +29,7 @@ class LoadArticle(internal val context: Context, internal val layout: LinearLayo
 
     internal val mProgressDialog: ProgressDialog = ProgressDialog(context)
     internal val font_size: Int = 17
+
     internal val options: DisplayImageOptions = DisplayImageOptions.Builder()
             .showImageOnLoading(R.drawable.logo)
             .cacheInMemory(true)

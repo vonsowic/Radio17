@@ -17,10 +17,12 @@ import com.bearcave.radio17.exceptions.NoInternetConnectionException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.IOException
+import android.R.attr.fragment
+import com.bearcave.radio17.MainActivity
 
 
 /**
- * A simple [Fragment] subclass.
+ * Fragment representing list of articles
  */
 class ArticleListViewFragment : Fragment() {
 
@@ -33,11 +35,15 @@ class ArticleListViewFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_article_list_view, container, false)
+        val info = arguments.getStringArrayList(MainActivity.RADIO_STATIC_FIELDS.FRAGMENT_KEY)
+
         listView = view?.findViewById(R.id.listView) as ListView?
         adapter = ListViewAdapter(context)
 
+        activity.title = info[0]
+
         try {
-            LoadAndPrepareContent().execute(url)
+            LoadAndPrepareContent().execute(getString(R.string.radio17_url) + info[1])
         } catch (e: NoInternetConnectionException){
             Toast.makeText(
                     context,

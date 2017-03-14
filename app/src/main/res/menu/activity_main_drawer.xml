@@ -7,31 +7,44 @@
             android:title="@string/player" />
 
         <item
+            android:id="@+id/nav_news"
+            android:title="@string/news" />
+
+        <item
             android:id="@+id/nav_timetable"
             android:title="@string/timetable" />
 
     </group>
 
-    <item
-        android:id="@+id/nav_blog"
-        android:title="@string/musicblog" />
+    <group android:checkableBehavior="single">
 
-    <item android:title="@string/news">
-        <menu>
-            <item
-                android:id="@+id/nav_news"
-                android:title="@string/news" />
-            <item
-                android:id="@+id/nav_information"
-                android:title="@string/information" />
-            <item
-                android:id="@+id/nav_podcast"
-                android:title="@string/podcast" />
-            <item
-                android:id="@+id/nav_parties"
-                android:title="@string/parties" />
+        <item android:title="@string/musicblog">
+            <menu>
 
-        </menu>
-    </item>
+                <item
+                    android:id="@+id/nav_musicblog"
+                    android:title="@string/musicblog" />
+
+                <item
+                    android:id="@+id/nav_interview"
+                    android:title="@string/interviews" />
+
+                <item
+                    android:id="@+id/nav_reports"
+                    android:title="@string/reports" />
+
+                <item
+                    android:id="@+id/nav_concerts"
+                    android:title="@string/concerts" />
+
+                <item
+                    android:id="@+id/nav_reviews"
+                    android:title="@string/reviews" />
+
+            </menu>
+        </item>
+
+    </group>
+
 
 </menu>
