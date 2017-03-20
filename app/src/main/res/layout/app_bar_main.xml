@@ -45,10 +45,21 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:orientation="vertical">
+
         <FrameLayout
             android:id="@+id/player_placeholder"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"/>
+            android:layout_height="wrap_content" />
+
+        <FrameLayout
+            android:id="@+id/article_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

@@ -26,18 +26,18 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.android.support:design:24.2.1'
-    compile 'org.jsoup:jsoup:1.9.2'
+    compile 'org.jsoup:jsoup:1.10.2'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'me.biubiubiu.justifytext:library:1.1'
     compile 'com.github.bluejamesbond:textjustify-android:2.1.6'
     compile 'com.sothree.slidinguppanel:library:3.3.1'
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'org.assertj:assertj-core:3.6.1'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-
 }
 repositories {
     mavenCentral()

@@ -16,18 +16,21 @@ import android.support.v7.widget.Toolbar
 import android.util.SparseArray
 import android.view.Menu
 import android.view.MenuItem
+import com.bearcave.radio17.exceptions.NoInternetConnectionFragment
 import com.bearcave.radio17.list_of_articles.ArticleListViewFragment
-import com.bearcave.radio17.list_of_articles.TimetableFragment
+import com.bearcave.radio17.list_of_articles.articles.TimetableFragment
 import com.bearcave.radio17.player.HomeViewFragment
 import com.bearcave.radio17.player.PlayerFragment
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import java.util.*
 import kotlin.collections.ArrayList
-import android.support.v4.view.MenuItemCompat.getActionView
 
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+        RadioFragment.NoInternetConnectionListener {
+
+
 
     object RADIO_STATIC_FIELDS{
         val FRAGMENT_KEY = "fragment_key"
@@ -119,7 +122,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                                 ArrayList(
                                                         Arrays.asList(
                                                                 getString(R.string.app_name),
-                                                                "?s="+query)
+                                                                "/?s="+query)
                                                 )
                                         )
                                 )
@@ -140,8 +143,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun displaySelectedScreen(itemId: Int) {
+        displayFragment(createFragment(fragmentMap[itemId]))
+    }
+
+    private fun displayFragment(fragment: Fragment){
         val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.content_frame, createFragment(fragmentMap[itemId]))
+        ft.replace(R.id.content_frame, fragment)
         ft.commit()
     }
 
@@ -153,7 +160,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return fragment
     }
 
-
+    override fun noInternetConnection() {
+        displayFragment(NoInternetConnectionFragment())
+    }
 
     inner class RadioFragmentFactory(val type: Class<out Fragment>, val bundle: ArrayList<String>)
 }

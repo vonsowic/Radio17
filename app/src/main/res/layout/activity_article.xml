@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/article_activity"
-    tools:context="com.bearcave.radio17.articles.ArticleActivity">
+    tools:context=".list_of_articles.articles.ArticleActivity">
 
 
     <android.support.design.widget.AppBarLayout
