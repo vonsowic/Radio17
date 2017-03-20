@@ -1,5 +1,4 @@
-package com.bearcave.radio17.articles;
-
+package com.bearcave.radio17.exceptions;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,22 +8,17 @@ import android.view.ViewGroup;
 
 import com.bearcave.radio17.R;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class ArticleFragment extends Fragment {
 
+public class NoInternetConnectionFragment extends Fragment {
 
-    public ArticleFragment() {
+    public NoInternetConnectionFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.activity_article, container, false);
+        return inflater.inflate(R.layout.fragment_no_internet_connection, container, false);
     }
-
 }

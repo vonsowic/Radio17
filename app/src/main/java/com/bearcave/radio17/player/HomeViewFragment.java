@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bearcave.radio17.MainActivity;
 import com.bearcave.radio17.R;
 import com.bearcave.radio17.exceptions.NoInternetConnectionException;
 
@@ -81,6 +82,11 @@ public class HomeViewFragment extends Fragment implements View.OnClickListener{
 
         ImageButton button = (ImageButton) view.findViewById(R.id.home_button_listen);
         button.setOnClickListener(this);
+
+        getActivity().setTitle(
+                getString(R.string.app_name)
+        );
+
 
         loadSongTitleThread.start();
         return view;

@@ -1,7 +1,10 @@
 package com.bearcave.radio17.list_of_articles;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +14,7 @@ import android.widget.TextView;
 
 
 import com.bearcave.radio17.R;
-import com.bearcave.radio17.articles.ArticleActivity;
+import com.bearcave.radio17.list_of_articles.articles.ArticleFragment;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -30,7 +33,6 @@ import java.util.List;
 public class ListViewAdapter extends BaseAdapter {
 
     private Context context;
-    private LayoutInflater inflater;
 
     private List<String> articleTitles  =   new ArrayList<>();
     private List<String> articleTexts   =   new ArrayList<>();
@@ -40,8 +42,11 @@ public class ListViewAdapter extends BaseAdapter {
     private DisplayImageOptions options;
     private ImageLoader imageLoader;
 
-    public ListViewAdapter(Context context) {
+    private FragmentManager fragmentManager;
+
+    public ListViewAdapter(Context context, FragmentManager fragmentManager) {
         this.context = context;
+        this.fragmentManager = fragmentManager;
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.logo) // resource or drawable
@@ -70,7 +75,7 @@ public class ListViewAdapter extends BaseAdapter {
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View itemView = inflater.inflate(R.layout.listview_item, parent, false);
 
@@ -87,11 +92,16 @@ public class ListViewAdapter extends BaseAdapter {
 
             @Override
             public void onClick(View arg0) {
-                Intent intent = new Intent(context, ArticleActivity.class);
-                intent.putExtra("article_url",      articleUrls.get(position));
-                intent.putExtra("poster_url",       imagesUrls.get(position));
-                intent.putExtra("article_title",    articleTitles.get(position));
-                context.startActivity(intent);
+
+                Fragment articleFragment = new ArticleFragment();
+                Bundle info = new Bundle();
+                info.putString("article_url", articleUrls.get(position));
+                articleFragment.setArguments(info);
+
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.article_placeholder, articleFragment);
+                fragmentTransaction.commit();
+
             }
         });
 

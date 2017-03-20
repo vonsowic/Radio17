@@ -17,7 +17,6 @@ import com.bearcave.radio17.exceptions.NoInternetConnectionException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.IOException
-import android.R.attr.fragment
 import com.bearcave.radio17.MainActivity
 
 
@@ -27,7 +26,7 @@ import com.bearcave.radio17.MainActivity
 class ArticleListViewFragment : Fragment() {
 
     internal var listView: ListView? = null
-    internal val url = "http://radio17.pl/category/aktualnosci/"
+    internal var url = "http://radio17.pl/category/aktualnosci/"
     internal var adapter : ListViewAdapter? = null
 
     internal var page = 1
@@ -38,12 +37,18 @@ class ArticleListViewFragment : Fragment() {
         val info = arguments.getStringArrayList(MainActivity.RADIO_STATIC_FIELDS.FRAGMENT_KEY)
 
         listView = view?.findViewById(R.id.listView) as ListView?
-        adapter = ListViewAdapter(context)
+
+        adapter = ListViewAdapter(
+                context,
+                activity.supportFragmentManager
+        )
+
 
         activity.title = info[0]
+        url = getString(R.string.radio17_url) + info[1]
 
         try {
-            LoadAndPrepareContent().execute(getString(R.string.radio17_url) + info[1])
+            LoadAndPrepareContent().execute(url)
         } catch (e: NoInternetConnectionException){
             Toast.makeText(
                     context,
@@ -104,7 +109,7 @@ class ArticleListViewFragment : Fragment() {
                             && !isLoading) {
 
                         isLoading = true
-                        LoadAndPrepareContent().execute(url + "page/" + ++page)
+                        LoadAndPrepareContent().execute(url + "/page/" + ++page)
                     }
                 }
             })
