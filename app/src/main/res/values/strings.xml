@@ -1,9 +1,5 @@
 <resources>
     <string name="app_name">Radio17</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_settings">Ustawienia</string>
-    <string name="title_activity_player">Radio17</string>
     <string name="loading">Wczytuję dane</string>
     <string name="no_internet_connection">Brak połączenia z siecią</string>
     <string name="title_not_available">Tytuł utworu nie jest dostępny</string>
@@ -11,12 +7,15 @@
     <string name="player">Odtwarzacz</string>
     <string name="recorder">Nagrywarka</string>
     <string name="timetable">Ramówka</string>
-    <string name="music">Muzyka</string>
-    <string name="whatsnewinmusic">Nowości Muzyczne</string>
+
     <string name="musicblog">Blog Muzyczny</string>
+    <string name="interviews">Wywiady</string>
+    <string name="reports">Relacje</string>
+    <string name="concerts">Koncerty</string>
+    <string name="reviews">Recenzje</string>
 
     <string name="information">Informacje</string>
-    <string name="news">Aktualnosci</string>
+    <string name="news">Aktualności</string>
     <string name="podcast">Podcasty</string>
     <string name="parties">Imprezy</string>
 
@@ -25,4 +24,10 @@
 
     <string name="kanal_glowny">Kanał Główny</string>
     <string name="no_internet_conn_notification">No Internet Connection</string>
+    <string name="navigation_drawer_open">Open</string>
+    <string name="navigation_drawer_close">Close</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

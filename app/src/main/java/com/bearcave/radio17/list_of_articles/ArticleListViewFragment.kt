@@ -4,28 +4,27 @@ package com.bearcave.radio17.list_of_articles
 import android.app.ProgressDialog
 import android.os.AsyncTask
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.ListView
-import android.widget.Toast
 
 import com.bearcave.radio17.R
-import com.bearcave.radio17.exceptions.NoInternetConnectionException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.IOException
+import com.bearcave.radio17.MainActivity
+import com.bearcave.radio17.RadioFragment
 
 
 /**
- * A simple [Fragment] subclass.
+ * Fragment representing list of articles
  */
-class ArticleListViewFragment : Fragment() {
+class ArticleListViewFragment : RadioFragment() {
 
     internal var listView: ListView? = null
-    internal val url = "http://radio17.pl/category/aktualnosci/"
+    internal var url = "http://radio17.pl/category/aktualnosci/"
     internal var adapter : ListViewAdapter? = null
 
     internal var page = 1
@@ -33,10 +32,22 @@ class ArticleListViewFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_article_list_view, container, false)
+        val info = arguments.getStringArrayList(MainActivity.RADIO_STATIC_FIELDS.FRAGMENT_KEY)
+
         listView = view?.findViewById(R.id.listView) as ListView?
-        adapter = ListViewAdapter(context)
+
+        adapter = ListViewAdapter(
+                context,
+                activity.supportFragmentManager
+        )
+
+
+        activity.title = info[0]
+        url = getString(R.string.radio17_url) + info[1]
+
 
         LoadAndPrepareContent().execute(url)
+
         return view
     }
 
@@ -69,12 +80,7 @@ class ArticleListViewFragment : Fragment() {
             mProgressDialog.dismiss()
 
             if (noInternetConnectionException != null) {
-                Toast.makeText(
-                        context,
-                        R.string.no_internet_conn_notification,
-                        Toast.LENGTH_LONG).show()
-
-                activity.finish()
+                notifyAboutInternetConnection()
                 return
             }
 
@@ -83,13 +89,13 @@ class ArticleListViewFragment : Fragment() {
             if(page>1){
                 adapter?.notifyDataSetChanged()
                 isLoading = false
+            } else {
+                listView?.adapter = adapter
             }
 
             listView?.setOnScrollListener(object : AbsListView.OnScrollListener {
 
-                override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {
-
-                }
+                override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {}
 
                 override fun onScroll(view: AbsListView, firstVisibleItem: Int,
                                       visibleItemCount: Int, totalItemCount: Int) {
@@ -97,12 +103,10 @@ class ArticleListViewFragment : Fragment() {
                             && !isLoading) {
 
                         isLoading = true
-                        LoadAndPrepareContent().execute(url + "page/" + ++page)
+                        LoadAndPrepareContent().execute(url + "/page/" + ++page)
                     }
                 }
             })
-
-            listView?.adapter = adapter
         }
     }
 }

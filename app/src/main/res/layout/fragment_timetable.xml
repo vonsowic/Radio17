@@ -4,7 +4,7 @@ xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-tools:context="com.bearcave.radio17.list_of_articles.TimetableFragment">
+tools:context=".list_of_articles.articles.TimetableFragment">
 
 <LinearLayout
     android:id="@+id/timetable_content"

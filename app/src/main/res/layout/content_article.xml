@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/activity_horizontal_margin"
+    android:layout_marginBottom="@dimen/activity_horizontal_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.bearcave.radio17.articles.ArticleActivity"
-    tools:showIn="@layout/activity_article">
+    tools:context=".list_of_articles.articles.ArticleFragment">
 
     <LinearLayout
         android:id="@+id/articleContent"
