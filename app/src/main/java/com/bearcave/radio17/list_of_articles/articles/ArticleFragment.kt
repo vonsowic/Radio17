@@ -2,6 +2,7 @@ package com.bearcave.radio17.list_of_articles.articles
 
 
 import android.app.ProgressDialog
+import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 
 import com.bearcave.radio17.R
+import java.io.IOException
 
 
 /**
@@ -18,6 +20,12 @@ import com.bearcave.radio17.R
  */
 class ArticleFragment : Fragment() {
 
+    var callback : OnArticleStateListener? = null
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        callback = context as OnArticleStateListener
+    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -35,6 +43,7 @@ class ArticleFragment : Fragment() {
     inner class LoadArticleTask(val layout: LinearLayout) : AsyncTask<String, Void, LoadArticle>() {
 
         internal val mProgressDialog: ProgressDialog = ProgressDialog(context)
+        internal var noInterentConnection : IOException? = null
 
         override fun onPreExecute() {
             super.onPreExecute()
@@ -45,14 +54,30 @@ class ArticleFragment : Fragment() {
 
         override fun doInBackground(vararg url: String?): LoadArticle {
             val loader = LoadArticle(context)
-            loader.prepare(url[0])
+            try {
+                loader.prepare(url[0])
+            } catch (e: IOException){
+                noInterentConnection = e
+            }
             return loader
         }
 
         override fun onPostExecute(result: LoadArticle) {
             super.onPostExecute(result)
             mProgressDialog.dismiss()
+
+            if(noInterentConnection != null){
+                callback?.onNoInternetConnection()
+                return
+            }
+
             layout.addView(result.execute())
+            callback?.onArticlePrepared()
         }
+    }
+
+    interface OnArticleStateListener{
+        fun onNoInternetConnection()
+        fun onArticlePrepared()
     }
 }

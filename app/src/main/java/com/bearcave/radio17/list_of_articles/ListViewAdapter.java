@@ -108,11 +108,19 @@ public class ListViewAdapter extends BaseAdapter {
         return itemView;
     }
 
+    protected String getPostContainerId() {
+        return "posts-container";
+    }
+
+    protected String getPostTitleClassName(){
+        return "post-title";
+    }
+
     public void addToLists(Document doc){
-        Elements posts = doc.getElementById("posts-container").children();
+        Elements posts = doc.getElementById(getPostContainerId()).children();
         for (Element post:posts){
-            articleTitles.add(post.getElementsByClass("post-title").first().text());
-            articleUrls.add(post.getElementsByClass("post-title").first().select("a").attr("href"));
+            articleTitles.add(post.getElementsByClass(getPostTitleClassName()).first().text());
+            articleUrls.add(post.getElementsByClass(getPostTitleClassName()).first().select("a").attr("href"));
             articleTexts.add(post.getElementsByClass("excerpt-container").first().text());
             imagesUrls.add(post.getElementsByClass("gallery-icon").first().attr("href"));
         }

@@ -88,7 +88,8 @@ public class HomeViewFragment extends Fragment implements View.OnClickListener{
         );
 
 
-        loadSongTitleThread.start();
+        // TODO: load title
+        //loadSongTitleThread.start();
         return view;
     }
 

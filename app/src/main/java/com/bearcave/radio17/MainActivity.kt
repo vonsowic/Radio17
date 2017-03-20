@@ -18,6 +18,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.bearcave.radio17.exceptions.NoInternetConnectionFragment
 import com.bearcave.radio17.list_of_articles.ArticleListViewFragment
+import com.bearcave.radio17.list_of_articles.articles.ArticleFragment
 import com.bearcave.radio17.list_of_articles.articles.TimetableFragment
 import com.bearcave.radio17.player.HomeViewFragment
 import com.bearcave.radio17.player.PlayerFragment
@@ -27,16 +28,17 @@ import kotlin.collections.ArrayList
 
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-        RadioFragment.NoInternetConnectionListener {
-
-
+class MainActivity : AppCompatActivity(),
+        NavigationView.OnNavigationItemSelectedListener,
+        RadioFragment.NoInternetConnectionListener,
+        ArticleFragment.OnArticleStateListener{
 
     object RADIO_STATIC_FIELDS{
         val FRAGMENT_KEY = "fragment_key"
     }
 
     internal val fragmentMap = SparseArray<RadioFragmentFactory>()
+    internal var articleLayout: SlidingUpPanelLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,18 +59,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         ft.replace(R.id.player_placeholder, PlayerFragment())
         ft.commit()
 
-
-        val slidingUpPanelLayout = findViewById(R.id.sliding_layout) as SlidingUpPanelLayout?
-        slidingUpPanelLayout!!.setOnClickListener { slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED }
-
+        articleLayout = findViewById(R.id.sliding_layout) as SlidingUpPanelLayout?
+        articleLayout!!.setOnClickListener { articleLayout?.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED }
 
         val fab = findViewById(R.id.fab_showing_player) as FloatingActionButton?
         fab!!.setOnClickListener {
-            if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
-                slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+
+            if (articleLayout?.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
+                articleLayout?.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
                 fab.setImageResource(android.R.drawable.arrow_down_float)
             } else {
-                slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.HIDDEN
+                articleLayout?.panelState = SlidingUpPanelLayout.PanelState.HIDDEN
                 fab.setImageResource(android.R.drawable.arrow_up_float)
             }
         }
@@ -146,9 +147,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         displayFragment(createFragment(fragmentMap[itemId]))
     }
 
-    private fun displayFragment(fragment: Fragment){
+    private fun displayFragment(fragment: Fragment, layoutId : Int = R.id.content_frame){
         val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.content_frame, fragment)
+        ft.replace(layoutId, fragment)
         ft.commit()
     }
 
@@ -160,9 +161,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return fragment
     }
 
-    override fun noInternetConnection() {
+    override fun showInternetState() {
         displayFragment(NoInternetConnectionFragment())
     }
+
+    override fun onNoInternetConnection() {
+        displayFragment(NoInternetConnectionFragment(), R.id.article_placeholder)
+    }
+
+    override fun onArticlePrepared() {
+        articleLayout?.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
+    }
+
 
     inner class RadioFragmentFactory(val type: Class<out Fragment>, val bundle: ArrayList<String>)
 }

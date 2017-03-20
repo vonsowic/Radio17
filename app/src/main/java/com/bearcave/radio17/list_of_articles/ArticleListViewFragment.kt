@@ -9,10 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.ListView
-import android.widget.Toast
 
 import com.bearcave.radio17.R
-import com.bearcave.radio17.exceptions.NoInternetConnectionException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.IOException
@@ -53,15 +51,11 @@ class ArticleListViewFragment : RadioFragment() {
         return view
     }
 
-    private open inner class LoadAndPrepareContent() : AsyncTask<String, Void, Document?>() {
+    private open inner class LoadAndPrepareContent : AsyncTask<String, Void, Document?>() {
 
         internal var mProgressDialog = ProgressDialog(context)
         private var noInternetConnectionException: IOException? = null  // or another error
         internal var isLoading = false
-
-        init {
-
-        }
 
 
         override fun onPreExecute() {
@@ -86,7 +80,8 @@ class ArticleListViewFragment : RadioFragment() {
             mProgressDialog.dismiss()
 
             if (noInternetConnectionException != null) {
-                throw NoInternetConnectionException()
+                notifyAboutInternetConnection()
+                return
             }
 
             adapter?.addToLists(result)

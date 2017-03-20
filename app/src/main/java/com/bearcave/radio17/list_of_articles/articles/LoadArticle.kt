@@ -67,13 +67,7 @@ class LoadArticle(internal val context: Context) {
     fun prepare(url: String?){
         root = LinearLayout(context)
         root.orientation = LinearLayout.VERTICAL
-
-        try {
-            doc = Jsoup.connect(url).get()
-
-        } catch (e: IOException){
-            throw e
-        }
+        doc = Jsoup.connect(url).get()
     }
 
     fun execute(): View {

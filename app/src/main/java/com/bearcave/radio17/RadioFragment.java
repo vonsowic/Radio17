@@ -14,7 +14,7 @@ public abstract class RadioFragment extends Fragment {
     private NoInternetConnectionListener callback;
 
     public interface NoInternetConnectionListener{
-        void noInternetConnection();
+        void showInternetState();
     }
 
     @Override
@@ -26,7 +26,10 @@ public abstract class RadioFragment extends Fragment {
         } catch(ClassCastException e){
             throw new ClassCastException(context.toString()
                     + " must implement OnHeadlineSelectedListener");
-
         }
+    }
+
+    protected void notifyAboutInternetConnection(){
+        callback.showInternetState();
     }
 }
