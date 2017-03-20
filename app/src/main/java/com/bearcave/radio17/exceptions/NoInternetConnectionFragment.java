@@ -1,6 +1,7 @@
 package com.bearcave.radio17.exceptions;
 
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,7 @@ import android.view.ViewGroup;
 import com.bearcave.radio17.R;
 
 
-public class NoInternetConnectionFragment extends Fragment {
+public class NoInternetConnectionFragment extends DialogFragment {
 
     public NoInternetConnectionFragment() {
         // Required empty public constructor

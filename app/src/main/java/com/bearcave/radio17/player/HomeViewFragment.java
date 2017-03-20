@@ -35,7 +35,7 @@ public class HomeViewFragment extends Fragment implements View.OnClickListener{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: it's so ugly, that it makes onion cry. There must another solution.
+        // TODO: it's so ugly, that it makes onion cry. There must another solution for loading title.
         loadSongTitleThread = new Thread(new Runnable() {
             @Override
             public void run() {

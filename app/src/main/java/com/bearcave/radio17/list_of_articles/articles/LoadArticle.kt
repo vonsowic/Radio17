@@ -10,6 +10,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.io.IOException
 import java.util.*
@@ -26,6 +27,7 @@ class LoadArticle(internal val context: Context) {
     var fontSize: Float = 17F
 
     internal var root : LinearLayout = LinearLayout(context)
+    internal var doc: Document? = null
 
     internal val options: DisplayImageOptions = DisplayImageOptions.Builder()
             .showImageOnLoading(R.drawable.logo)
@@ -57,22 +59,30 @@ class LoadArticle(internal val context: Context) {
         tagToViewMap.put("i", this::addText)
         tagToViewMap.put("em", this::addText)
         tagToViewMap.put("div", this::addText)
+        tagToViewMap.put("strong", this::addText)
 
         tagToViewMap.put("img", this::addImage)
     }
 
-    fun execute(url: String?): View {
+    fun prepare(url: String?){
         root = LinearLayout(context)
         root.orientation = LinearLayout.VERTICAL
 
         try {
-            val doc = Jsoup.connect(url).get()
-            extract(
-                    doc.getElementsByClass("post-content").first()
-            )
+            doc = Jsoup.connect(url).get()
+
         } catch (e: IOException){
             throw e
         }
+    }
+
+    fun execute(): View {
+        root = LinearLayout(context)
+        root.orientation = LinearLayout.VERTICAL
+
+        extract(
+                doc?.getElementsByClass("post-content")!!.first()
+        )
 
         return root
     }
@@ -107,7 +117,6 @@ class LoadArticle(internal val context: Context) {
 
     private fun addImage(element: Element): View{
         val iv = ImageView(context)
-        iv.setImageResource(R.drawable.sluchaj)
         imageLoader.displayImage(element.absUrl("src"), iv, options)
         return iv
     }

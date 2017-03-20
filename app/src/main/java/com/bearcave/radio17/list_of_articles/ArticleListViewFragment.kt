@@ -4,7 +4,6 @@ package com.bearcave.radio17.list_of_articles
 import android.app.ProgressDialog
 import android.os.AsyncTask
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,12 +17,13 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.IOException
 import com.bearcave.radio17.MainActivity
+import com.bearcave.radio17.RadioFragment
 
 
 /**
  * Fragment representing list of articles
  */
-class ArticleListViewFragment : Fragment() {
+class ArticleListViewFragment : RadioFragment() {
 
     internal var listView: ListView? = null
     internal var url = "http://radio17.pl/category/aktualnosci/"
@@ -47,22 +47,21 @@ class ArticleListViewFragment : Fragment() {
         activity.title = info[0]
         url = getString(R.string.radio17_url) + info[1]
 
-        try {
-            LoadAndPrepareContent().execute(url)
-        } catch (e: NoInternetConnectionException){
-            Toast.makeText(
-                    context,
-                    R.string.no_internet_conn_notification,
-                    Toast.LENGTH_LONG).show()
-        }
+
+        LoadAndPrepareContent().execute(url)
+
         return view
     }
 
-    private open inner class LoadAndPrepareContent : AsyncTask<String, Void, Document?>() {
+    private open inner class LoadAndPrepareContent() : AsyncTask<String, Void, Document?>() {
 
         internal var mProgressDialog = ProgressDialog(context)
         private var noInternetConnectionException: IOException? = null  // or another error
         internal var isLoading = false
+
+        init {
+
+        }
 
 
         override fun onPreExecute() {

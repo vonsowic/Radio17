@@ -32,7 +32,7 @@ class ArticleFragment : Fragment() {
         return view
     }
 
-    inner class LoadArticleTask(val layout: LinearLayout) : AsyncTask<String, Void, View>() {
+    inner class LoadArticleTask(val layout: LinearLayout) : AsyncTask<String, Void, LoadArticle>() {
 
         internal val mProgressDialog: ProgressDialog = ProgressDialog(context)
 
@@ -43,14 +43,16 @@ class ArticleFragment : Fragment() {
             mProgressDialog.show()
         }
 
-        override fun doInBackground(vararg url: String?): View {
-            return LoadArticle(context).execute(url[0])
+        override fun doInBackground(vararg url: String?): LoadArticle {
+            val loader = LoadArticle(context)
+            loader.prepare(url[0])
+            return loader
         }
 
-        override fun onPostExecute(result: View?) {
+        override fun onPostExecute(result: LoadArticle) {
             super.onPostExecute(result)
             mProgressDialog.dismiss()
-            layout.addView(result)
+            layout.addView(result.execute())
         }
     }
 }
