@@ -1,11 +1,16 @@
 package com.bearcave.radio17.list_of_articles.articles
 
+import android.support.v7.app.AppCompatActivity
 import android.content.Context
+import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.text.Html
 import android.view.View
 import android.widget.*
 
 import com.bearcave.radio17.R
+import com.bearcave.radio17.player.ArticlePlayerFragment
+import com.bearcave.radio17.player.PlayerFragment
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
@@ -22,7 +27,7 @@ import kotlin.collections.HashMap
  *
  * @author Michał Wąsowicz
  */
-class LoadArticle(internal val context: Context) {
+class LoadArticle(internal val activity: FragmentActivity, internal val context: Context) {
 
     var fontSize: Float = 17F
 
@@ -62,12 +67,17 @@ class LoadArticle(internal val context: Context) {
         tagToViewMap.put("strong", this::addText)
 
         tagToViewMap.put("img", this::addImage)
+
+        tagToViewMap.put("source", this::addPlayer)
+
+
     }
 
     fun prepare(url: String?){
         root = LinearLayout(context)
         root.orientation = LinearLayout.VERTICAL
-        doc = Jsoup.connect(url).get()
+        //doc = Jsoup.connect(url).get()
+        doc = Jsoup.connect("http://radio17.pl/polcon/").get()
     }
 
     fun execute(): View {
@@ -113,5 +123,20 @@ class LoadArticle(internal val context: Context) {
         val iv = ImageView(context)
         imageLoader.displayImage(element.absUrl("src"), iv, options)
         return iv
+    }
+
+    private fun addPlayer(element: Element): View {
+        val player = ArticlePlayerFragment()
+        val info = Bundle()
+        info.putString(PlayerFragment.SOURCE_KEY, element.attr("src"))
+        player.arguments = info
+
+        val layout = FrameLayout(context)
+        layout.id = 69
+        val ft = activity.supportFragmentManager.beginTransaction()
+        ft.replace(layout.id, player)
+        ft.commit()
+
+        return layout
     }
 }

@@ -16,7 +16,7 @@ public abstract class RadioFragment extends Fragment {
     private NoInternetConnectionListener callback;
 
     public interface NoInternetConnectionListener{
-        void showInternetState();
+        void onNoInternetConnectionState();
     }
 
     @Override
@@ -32,6 +32,6 @@ public abstract class RadioFragment extends Fragment {
     }
 
     protected void notifyAboutInternetConnection(){
-        callback.showInternetState();
+        callback.onNoInternetConnectionState();
     }
 }

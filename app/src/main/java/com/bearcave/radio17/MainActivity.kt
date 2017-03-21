@@ -19,6 +19,7 @@ import com.bearcave.radio17.list_of_articles.ListViewAdapter
 import com.bearcave.radio17.list_of_articles.articles.ArticleFragment
 import com.bearcave.radio17.list_of_articles.PostContainer
 import com.bearcave.radio17.list_of_articles.articles.TimetableFragment
+import com.bearcave.radio17.player.HomePlayerFragment
 import com.bearcave.radio17.player.HomeViewFragment
 import com.bearcave.radio17.player.PlayerFragment
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity(),
 
     internal val fragmentMap = SparseArray<RadioFragmentFactory>()
     internal var articleLayout: SlidingUpPanelLayout? = null
-    internal val mainPlayerFragment = PlayerFragment()
+    internal val mainPlayerFragment = HomePlayerFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,9 +69,9 @@ class MainActivity : AppCompatActivity(),
         val fab = findViewById(R.id.fab_showing_player) as FloatingActionButton?
         fab!!.setOnClickListener {
             if (articleLayout?.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
-                articleLayout?.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+                setArticlePanelCollapsed()
             } else {
-                articleLayout?.panelState = SlidingUpPanelLayout.PanelState.HIDDEN
+                setArticlePanelHidden()
             }
         }
 
@@ -114,6 +115,18 @@ class MainActivity : AppCompatActivity(),
         ft.commit()
     }
 
+    private fun setArticlePanelCollapsed() {
+        articleLayout?.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+    }
+
+    private fun setArticlePanelHidden() {
+        articleLayout?.panelState = SlidingUpPanelLayout.PanelState.HIDDEN
+    }
+
+    private fun setArticlePanelExpanded() {
+        articleLayout?.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
+    }
+
     fun createFragment(factory: RadioFragmentFactory): Fragment {
         val fragment = factory.type.newInstance()
         val info = Bundle()
@@ -122,12 +135,9 @@ class MainActivity : AppCompatActivity(),
         return fragment
     }
 
-    override fun showInternetState() {
-        displayFragment(NoInternetConnectionFragment())
-    }
-
-    override fun onNoInternetConnection() {
+    override fun onNoInternetConnectionState() {
         displayFragment(NoInternetConnectionFragment(), R.id.article_placeholder)
+        setArticlePanelExpanded()
     }
 
     override fun onArticlePrepared() {

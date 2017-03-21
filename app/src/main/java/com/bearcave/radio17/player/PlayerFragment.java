@@ -1,21 +1,13 @@
 package com.bearcave.radio17.player;
 
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
+import android.util.SparseArray;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-
-import com.bearcave.radio17.R;
 import com.bearcave.radio17.RadioFragment;
-
 import java.io.IOException;
 
 
-public class PlayerFragment extends RadioFragment
+public abstract class PlayerFragment extends RadioFragment
         implements  View.OnClickListener,
                     Player.OnStateListener{
 
@@ -24,39 +16,13 @@ public class PlayerFragment extends RadioFragment
     private String source;
     public static final String SOURCE_KEY = "source-key-for-player";
 
-    private Player player;
+    protected Player player;
+    protected SparseArray<Runnable> buttonMap;
 
-    ImageButton homeButt;
-    ImageButton playButt;
-
-    @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_player, container, false);
+    protected void initialize(){
         player = new Player(this);
         source = getArguments().getString(SOURCE_KEY);
-
-        homeButt = (ImageButton) view.findViewById(R.id.player_play_button);
-        homeButt.setOnClickListener(this);
-
-        playButt = (ImageButton) view.findViewById(R.id.player_home_station_button);
-        playButt.setOnClickListener(this);
-
-        return view;
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.player_play_button:
-                playPause();
-                break;
-
-            case R.id.player_home_station_button:
-                onMainButtonClicked();
-                break;
-        }
+        buttonMap = new SparseArray<>();
     }
 
     public void onMainButtonClicked(){
@@ -79,6 +45,27 @@ public class PlayerFragment extends RadioFragment
         } catch (IOException e) {
             notifyAboutInternetConnection();
         }
+    }
+
+    public void play(){
+        try {
+            player.play();
+        } catch (IOException e) {
+            notifyAboutInternetConnection();
+        }
+    }
+
+    public void pause(){
+        player.pause();
+    }
+
+    public void stop(){
+        player.stop();
+    }
+
+    @Override
+    public void onClick(View v) {
+        buttonMap.get(v.getId()).run();
     }
 
     /**
