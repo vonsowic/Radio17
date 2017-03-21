@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 
 import com.bearcave.radio17.R
+import com.bearcave.radio17.list_of_articles.PostContainer
 import java.io.IOException
 
 

@@ -41,7 +41,6 @@ class ArticleListViewFragment : RadioFragment() {
         activity.title = info[0]
         url = getString(R.string.radio17_url) + info[1]
 
-
         LoadAndPrepareContent().execute(url)
 
         return view

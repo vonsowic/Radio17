@@ -1,6 +1,7 @@
 package com.bearcave.radio17.player;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,27 +10,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bearcave.radio17.MainActivity;
 import com.bearcave.radio17.R;
-import com.bearcave.radio17.exceptions.NoInternetConnectionException;
 
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
-import java.util.Objects;
 
 
 public class HomeViewFragment extends Fragment implements View.OnClickListener{
 
     Thread loadSongTitleThread;
     TextView songTitleTextView;
+    Listener mainActivity;
 
     public HomeViewFragment() {
         // Required empty public constructor
     }
 
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mainActivity = (Listener) context;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,14 +81,12 @@ public class HomeViewFragment extends Fragment implements View.OnClickListener{
         songTitleTextView = (TextView) view.findViewById(R.id.text_song_title);
 
         TextView textStation = (TextView) view.findViewById(R.id.stationName);
-        textStation.setText("STACJA: "+getString(R.string.kanal_glowny));
+        textStation.setText(getString(R.string.kanal_glowny));
 
         ImageButton button = (ImageButton) view.findViewById(R.id.home_button_listen);
         button.setOnClickListener(this);
 
-        getActivity().setTitle(
-                getString(R.string.app_name)
-        );
+        getActivity().setTitle(getString(R.string.app_name));
 
 
         // TODO: load title
@@ -97,12 +98,7 @@ public class HomeViewFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.home_button_listen:
-                Player.setAudio(getString(R.string.player_url));
-                try {
-                    Player.playPause();
-                } catch (IOException e) {
-                    Toast.makeText(getContext(), R.string.no_internet_conn_notification, Toast.LENGTH_SHORT).show();
-                }
+                mainActivity.onMainPlayButtonClickedListener();
                 break;
         }
     }
@@ -111,5 +107,9 @@ public class HomeViewFragment extends Fragment implements View.OnClickListener{
     public void onPause() {
         super.onPause();
         loadSongTitleThread.interrupt();
+    }
+
+    public interface Listener{
+        void onMainPlayButtonClickedListener();
     }
 }

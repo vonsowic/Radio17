@@ -26,7 +26,7 @@ class TimetableFragment : Fragment() {
         try {
             //LoadArticle(context).execute("http://radio17.pl/ramowka/")
         } catch (e: NoInternetConnectionException){
-            Toast.makeText(context, R.string.no_internet_conn_notification, Toast.LENGTH_LONG).show()
+            Toast.makeText(context, R.string.no_internet_connection_notification, Toast.LENGTH_LONG).show()
         }
         return view
     }

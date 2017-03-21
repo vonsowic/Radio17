@@ -17,7 +17,7 @@ import com.bearcave.radio17.exceptions.NoInternetConnectionFragment
 import com.bearcave.radio17.list_of_articles.ArticleListViewFragment
 import com.bearcave.radio17.list_of_articles.ListViewAdapter
 import com.bearcave.radio17.list_of_articles.articles.ArticleFragment
-import com.bearcave.radio17.list_of_articles.articles.PostContainer
+import com.bearcave.radio17.list_of_articles.PostContainer
 import com.bearcave.radio17.list_of_articles.articles.TimetableFragment
 import com.bearcave.radio17.player.HomeViewFragment
 import com.bearcave.radio17.player.PlayerFragment
@@ -31,7 +31,8 @@ class MainActivity : AppCompatActivity(),
         NavigationView.OnNavigationItemSelectedListener,
         RadioFragment.NoInternetConnectionListener,
         ArticleFragment.OnArticleStateListener,
-        ListViewAdapter.OnArticleCreatedListener {
+        ListViewAdapter.OnArticleCreatedListener,
+        HomeViewFragment.Listener {
 
     object RADIO_STATIC_FIELDS{
         val FRAGMENT_KEY = "fragment_key"
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity(),
 
     internal val fragmentMap = SparseArray<RadioFragmentFactory>()
     internal var articleLayout: SlidingUpPanelLayout? = null
+    internal val mainPlayerFragment = PlayerFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,23 +57,20 @@ class MainActivity : AppCompatActivity(),
         val navigationView = findViewById(R.id.nav_view) as NavigationView?
         navigationView!!.setNavigationItemSelectedListener(this)
 
-        // add fragment player to player placeholder(Sliding layout in main view)
-        val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.player_placeholder, PlayerFragment())
-        ft.commit()
+        val info = Bundle()
+        info.putString(PlayerFragment.SOURCE_KEY, getString(R.string.player_url))
+        mainPlayerFragment.arguments = info
+        displayFragment(mainPlayerFragment, R.id.player_placeholder)
 
         articleLayout = findViewById(R.id.sliding_layout) as SlidingUpPanelLayout?
         articleLayout!!.setOnClickListener { articleLayout?.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED }
 
         val fab = findViewById(R.id.fab_showing_player) as FloatingActionButton?
         fab!!.setOnClickListener {
-
             if (articleLayout?.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
                 articleLayout?.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
-                fab.setImageResource(android.R.drawable.arrow_down_float)
             } else {
                 articleLayout?.panelState = SlidingUpPanelLayout.PanelState.HIDDEN
-                fab.setImageResource(android.R.drawable.arrow_up_float)
             }
         }
 
@@ -136,13 +135,16 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun OnArticleLoaded(post: PostContainer) {
-        print("VIEW CONTAINER" + post.title + post.url)
         val article = ArticleFragment()
         val info = Bundle()
         info.putSerializable(RADIO_STATIC_FIELDS.POST_CONTAINER, post)
         article.arguments = info
 
         displayFragment(article, R.id.article_placeholder)
+    }
+
+    override fun onMainPlayButtonClickedListener() {
+        mainPlayerFragment.onMainButtonClicked()
     }
 
     inner class RadioFragmentFactory(val type: Class<out Fragment>, val bundle: ArrayList<String>)

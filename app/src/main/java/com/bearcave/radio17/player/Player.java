@@ -1,46 +1,58 @@
 package com.bearcave.radio17.player;
 
-
+import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.support.v4.app.Fragment;
+
 import java.io.IOException;
 import java.util.Objects;
 
-public final class Player implements MediaPlayer.OnPreparedListener {
+public class Player {
 
-    private static String AUDIO_URL = null;
-    private final static MediaPlayer mediaPlayer = new MediaPlayer();
-    private static boolean needToPrepare = true;
+    OnStateListener callback;
 
-    private Player() {
+    private MediaPlayer mediaPlayer = new MediaPlayer();
+    private String currentlyPlayed;
+    boolean isPrepared = false;
+
+    public Player(PlayerFragment fragment) {
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        this.callback = fragment;
+
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                isPrepared = true;
+                callback.onPreparedStateListener();
+            }
+        });
     }
 
-    @Override
-    public void onPrepared(MediaPlayer mp) {  // called after prepareAsync()
-        mediaPlayer.start();
-    }
+    public void setAudio(String src)  {
+        try {
+            isPrepared = false;
+            mediaPlayer.setDataSource(src);
+            currentlyPlayed = src;
+            mediaPlayer.prepareAsync();
 
-    public static void setAudio(String src)  {
-        if (Objects.equals(AUDIO_URL, src)){
-            return;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        AUDIO_URL = src;
-        needToPrepare = true;
     }
 
-    public static void pause(){
+    public void pause(){
         mediaPlayer.pause();
     }
 
-    public static void play() throws IOException {
-        if (needToPrepare){
-            prepare();
-        }
-        mediaPlayer.start();
+    public void play() throws IOException {
+        if (isPrepared)
+            mediaPlayer.start();
+        else
+            callback.noSourceSetListener();
     }
 
-    public static void playPause() throws IOException {
+    public void playPause() throws IOException {
         if(isPlaying()){
             pause();
         } else {
@@ -48,13 +60,20 @@ public final class Player implements MediaPlayer.OnPreparedListener {
         }
     }
 
-    private static void prepare() throws IOException {
-        needToPrepare = false;
-        mediaPlayer.setDataSource(AUDIO_URL);
-        mediaPlayer.prepare();
+    public boolean isPlaying(){
+        return mediaPlayer.isPlaying();
     }
 
-    public static boolean isPlaying(){
-        return mediaPlayer.isPlaying();
+    public boolean isPrepared(){
+        return isPrepared;
+    }
+
+    public interface OnStateListener{
+        void onPreparedStateListener();
+        void noSourceSetListener();
+    }
+
+    public String getCurrentlyPlayed(){
+        return currentlyPlayed;
     }
 }
