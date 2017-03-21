@@ -1,13 +1,10 @@
 package com.bearcave.radio17
 
-import android.app.SearchManager
-import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
-import android.support.v4.view.MenuItemCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -18,7 +15,9 @@ import android.view.Menu
 import android.view.MenuItem
 import com.bearcave.radio17.exceptions.NoInternetConnectionFragment
 import com.bearcave.radio17.list_of_articles.ArticleListViewFragment
+import com.bearcave.radio17.list_of_articles.ListViewAdapter
 import com.bearcave.radio17.list_of_articles.articles.ArticleFragment
+import com.bearcave.radio17.list_of_articles.articles.PostContainer
 import com.bearcave.radio17.list_of_articles.articles.TimetableFragment
 import com.bearcave.radio17.player.HomeViewFragment
 import com.bearcave.radio17.player.PlayerFragment
@@ -31,10 +30,12 @@ import kotlin.collections.ArrayList
 class MainActivity : AppCompatActivity(),
         NavigationView.OnNavigationItemSelectedListener,
         RadioFragment.NoInternetConnectionListener,
-        ArticleFragment.OnArticleStateListener{
+        ArticleFragment.OnArticleStateListener,
+        ListViewAdapter.OnArticleCreatedListener {
 
     object RADIO_STATIC_FIELDS{
         val FRAGMENT_KEY = "fragment_key"
+        val POST_CONTAINER = "post-container"
     }
 
     internal val fragmentMap = SparseArray<RadioFragmentFactory>()
@@ -97,45 +98,6 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
-        val searchView = MenuItemCompat.getActionView(menu.findItem(R.id.action_search)) as SearchView
-        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-
-        //searchView.setIconifiedByDefault(false)
-
-        val queryTextListener = object : SearchView.OnQueryTextListener {
-            override fun onQueryTextChange(newText: String): Boolean {
-                // this is your adapter that will be filtered
-                return true
-            }
-
-            override fun onQueryTextSubmit(query: String): Boolean {
-                //Here u can get the value "query" which is entered in the search box.
-                supportFragmentManager
-                        .beginTransaction()
-                        .replace(
-                                R.id.content_frame,
-                                createFragment(
-                                        RadioFragmentFactory(
-                                                ArticleListViewFragment::class.java,
-                                                ArrayList(
-                                                        Arrays.asList(
-                                                                getString(R.string.app_name),
-                                                                "/?s="+query)
-                                                )
-                                        )
-                                )
-                        )
-                        .commit()
-                return true
-            }
-        }
-        searchView.setOnQueryTextListener(queryTextListener)
-        return true
-    }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         displaySelectedScreen(item.itemId)
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout?
@@ -173,6 +135,15 @@ class MainActivity : AppCompatActivity(),
         articleLayout?.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
     }
 
+    override fun OnArticleLoaded(post: PostContainer) {
+        print("VIEW CONTAINER" + post.title + post.url)
+        val article = ArticleFragment()
+        val info = Bundle()
+        info.putSerializable(RADIO_STATIC_FIELDS.POST_CONTAINER, post)
+        article.arguments = info
+
+        displayFragment(article, R.id.article_placeholder)
+    }
 
     inner class RadioFragmentFactory(val type: Class<out Fragment>, val bundle: ArrayList<String>)
 }

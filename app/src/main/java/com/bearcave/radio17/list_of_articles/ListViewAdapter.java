@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.bearcave.radio17.R;
 import com.bearcave.radio17.list_of_articles.articles.ArticleFragment;
+import com.bearcave.radio17.list_of_articles.articles.PostContainer;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -33,24 +34,19 @@ import java.util.List;
 public class ListViewAdapter extends BaseAdapter {
 
     private Context context;
-
-    private List<String> articleTitles  =   new ArrayList<>();
-    private List<String> articleTexts   =   new ArrayList<>();
-    private List<String> imagesUrls     =   new ArrayList<>();
-    private List<String> articleUrls    =   new ArrayList<>();
-
+    private List<PostContainer> posts  =   new ArrayList<>();
     private DisplayImageOptions options;
     private ImageLoader imageLoader;
+    private OnArticleCreatedListener callback;
 
-    private FragmentManager fragmentManager;
 
-    public ListViewAdapter(Context context, FragmentManager fragmentManager) {
+    public ListViewAdapter(Context context) {
         this.context = context;
-        this.fragmentManager = fragmentManager;
+        callback = (OnArticleCreatedListener) context;
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.logo) // resource or drawable
-                .cacheInMemory(true) // default => false
+                .cacheInMemory(false) // default => false
                 .cacheOnDisk(true) // default => false
                 .build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this.context)
@@ -61,12 +57,12 @@ public class ListViewAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return articleTitles.size();
+        return posts.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return posts.get(position);
     }
 
     @Override
@@ -80,49 +76,41 @@ public class ListViewAdapter extends BaseAdapter {
         View itemView = inflater.inflate(R.layout.listview_item, parent, false);
 
         TextView title = (TextView) itemView.findViewById(R.id.textTitle);
-        title.setText(articleTitles.get(position));
+        title.setText(posts.get(position).getTitle());
 
         TextView articleText = (TextView) itemView.findViewById(R.id.textArticle);
-        articleText.setText(articleTexts.get(position));
+        articleText.setText(posts.get(position).getText());
 
         ImageView articlePhoto = (ImageView) itemView.findViewById(R.id.imagePoster);
-        imageLoader.displayImage(imagesUrls.get(position), articlePhoto, options);
+        imageLoader.displayImage(posts.get(position).getImageUrl(), articlePhoto, options);
 
         itemView.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
-
-                Fragment articleFragment = new ArticleFragment();
-                Bundle info = new Bundle();
-                info.putString("article_url", articleUrls.get(position));
-                articleFragment.setArguments(info);
-
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.article_placeholder, articleFragment);
-                fragmentTransaction.commit();
-
+                callback.OnArticleLoaded(posts.get(position));
             }
         });
 
         return itemView;
     }
 
-    protected String getPostContainerId() {
-        return "posts-container";
-    }
-
-    protected String getPostTitleClassName(){
-        return "post-title";
-    }
 
     public void addToLists(Document doc){
-        Elements posts = doc.getElementById(getPostContainerId()).children();
-        for (Element post:posts){
-            articleTitles.add(post.getElementsByClass(getPostTitleClassName()).first().text());
-            articleUrls.add(post.getElementsByClass(getPostTitleClassName()).first().select("a").attr("href"));
-            articleTexts.add(post.getElementsByClass("excerpt-container").first().text());
-            imagesUrls.add(post.getElementsByClass("gallery-icon").first().attr("href"));
+        Elements postsElements = doc.getElementById("posts-container").children();
+        for (Element post:postsElements){
+            posts.add(
+                    new PostContainer(
+                            post.getElementsByClass("post-title").first().select("a").attr("href"),
+                            post.getElementsByClass("excerpt-container").first().text(),
+                            post.getElementsByClass("gallery-icon").first().attr("href"),
+                            post.getElementsByClass("post-title").first().text()
+                    )
+            );
         }
+    }
+
+    public interface OnArticleCreatedListener{
+        void OnArticleLoaded(PostContainer postContainer);
     }
 }

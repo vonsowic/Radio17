@@ -36,11 +36,7 @@ class ArticleListViewFragment : RadioFragment() {
 
         listView = view?.findViewById(R.id.listView) as ListView?
 
-        adapter = ListViewAdapter(
-                context,
-                activity.supportFragmentManager
-        )
-
+        adapter = ListViewAdapter(context)
 
         activity.title = info[0]
         url = getString(R.string.radio17_url) + info[1]

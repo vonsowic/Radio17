@@ -32,10 +32,9 @@ class ArticleFragment : Fragment() {
 
         val view = inflater?.inflate(R.layout.content_article, container, false)
         val layout = view?.findViewById(R.id.articleContent) as LinearLayout
-        val url = arguments.getString("article_url")
 
-        LoadArticleTask(layout).execute(url)
-
+        val post = arguments.getSerializable("post-container") as PostContainer
+        LoadArticleTask(layout).execute(post.url)
 
         return view
     }
