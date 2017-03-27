@@ -1,8 +1,16 @@
 package com.bearcave.radio17.player;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.SparseArray;
 import android.view.View;
+
 import com.bearcave.radio17.RadioFragment;
 import java.io.IOException;
 
@@ -13,37 +21,54 @@ public abstract class PlayerFragment extends RadioFragment
 
     public PlayerFragment() {}
 
-    private String source;
     public static final String SOURCE_KEY = "source-key-for-player";
+    private static String messageToAllPlayers = "all players: shut the fuck up";
 
-    protected Player player;
-    protected SparseArray<Runnable> buttonMap;
+    private String source;
+    private Player player;
+    private SparseArray<Runnable> buttonMap;
+
+    private LocalBroadcastManager manager;
+    private static IntentFilter pauseAllPlayers = new IntentFilter(messageToAllPlayers);
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    protected void setSource(){
+        source = getArguments().getString(SOURCE_KEY);
+    }
 
     protected void initialize(){
-        player = new Player(this);
-        source = getArguments().getString(SOURCE_KEY);
+
+        ///player = new Player(this);
         buttonMap = new SparseArray<>();
+
+        manager = LocalBroadcastManager.getInstance(getContext());
+        manager.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                pause();
+            }
+        }, pauseAllPlayers);
+
     }
 
     public void onMainButtonClicked(){
-        try {
-            if (player.isPlaying()) {
-                player.pause();
-                setDataSource(source);
-
-            } else {
-                player.play();
-            }
-        } catch (IOException e){
-            notifyAboutInternetConnection();
+        if (player.isPlaying()) {
+            pause();
+            setDataSource(source);
+        } else {
+            play();
         }
     }
 
     public void playPause(){
-        try {
-            player.playPause();
-        } catch (IOException e) {
-            notifyAboutInternetConnection();
+        if ( player.isPlaying()){
+            pause();
+        } else {
+            play();
         }
     }
 
@@ -69,12 +94,12 @@ public abstract class PlayerFragment extends RadioFragment
     }
 
     /**
-     * @param source url to audio
+     * @param src url to audio
      * @return true when source is changed; false otherwise
      */
-    public boolean setDataSource(String source){
-        if (!source.equals(player.getCurrentlyPlayed())){
-            player.setAudio(source);
+    public boolean setDataSource(String src){
+        if (!(player.isCurrentlySet())){
+            player.setAudio(src);
             return true;
         }
 
@@ -84,6 +109,7 @@ public abstract class PlayerFragment extends RadioFragment
     @Override
     public void onPreparedStateListener() {
         try {
+            manager.sendBroadcast(new Intent(messageToAllPlayers));
             player.play();
         } catch (IOException e) {
             notifyAboutInternetConnection();
@@ -93,5 +119,14 @@ public abstract class PlayerFragment extends RadioFragment
     @Override
     public void noSourceSetListener() {
         player.setAudio(source);
+    }
+
+    /**
+     * Set Runnable on id.
+     * @param id
+     * @param action
+     */
+    protected void put(int id, Runnable action){
+        buttonMap.put(id, action );
     }
 }

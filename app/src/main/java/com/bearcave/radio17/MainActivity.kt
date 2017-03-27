@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         val toolbar = findViewById(R.id.toolbar) as Toolbar?
         setSupportActionBar(toolbar)
 
@@ -57,11 +58,6 @@ class MainActivity : AppCompatActivity(),
 
         val navigationView = findViewById(R.id.nav_view) as NavigationView?
         navigationView!!.setNavigationItemSelectedListener(this)
-
-        val info = Bundle()
-        info.putString(PlayerFragment.SOURCE_KEY, getString(R.string.player_url))
-        mainPlayerFragment.arguments = info
-        displayFragment(mainPlayerFragment, R.id.player_placeholder)
 
         articleLayout = findViewById(R.id.sliding_layout) as SlidingUpPanelLayout?
         articleLayout!!.setOnClickListener { articleLayout?.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED }
@@ -87,6 +83,14 @@ class MainActivity : AppCompatActivity(),
 
         // show HomeViewFragment on start
         displaySelectedScreen(R.id.nav_player)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val info = Bundle()
+        info.putString(PlayerFragment.SOURCE_KEY, getString(R.string.player_url))
+        mainPlayerFragment.arguments = info
+        displayFragment(mainPlayerFragment, R.id.player_placeholder)
     }
 
     override fun onBackPressed() {

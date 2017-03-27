@@ -19,13 +19,11 @@ import java.io.IOException;
 
 public class HomeViewFragment extends Fragment implements View.OnClickListener{
 
-    Thread loadSongTitleThread;
+    //TODO:Thread loadSongTitleThread;
     TextView songTitleTextView;
     Listener mainActivity;
 
-    public HomeViewFragment() {
-        // Required empty public constructor
-    }
+    public HomeViewFragment() {}
 
 
     @Override
@@ -33,45 +31,6 @@ public class HomeViewFragment extends Fragment implements View.OnClickListener{
         super.onAttach(context);
         mainActivity = (Listener) context;
     }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // TODO: it's so ugly, that it makes onion cry. There must another solution for loading title.
-        loadSongTitleThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    final String title;
-                    String tmpTitle;
-                    try {
-                        tmpTitle = Jsoup.connect("http://37.187.247.31:8000/currentsong?sid=1").get().text();
-                    } catch (IOException e) {
-                        tmpTitle = getActivity().getString(R.string.title_not_available);
-                    }
-                    title = tmpTitle;
-
-                    try {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                songTitleTextView.setText(title);
-                            }
-                        });
-                    } catch (NullPointerException e){ }
-
-
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,9 +47,6 @@ public class HomeViewFragment extends Fragment implements View.OnClickListener{
 
         getActivity().setTitle(getString(R.string.app_name));
 
-
-        // TODO: load title
-        //loadSongTitleThread.start();
         return view;
     }
 
@@ -106,7 +62,7 @@ public class HomeViewFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onPause() {
         super.onPause();
-        loadSongTitleThread.interrupt();
+        //TODO:loadSongTitleThread.interrupt();
     }
 
     public interface Listener{

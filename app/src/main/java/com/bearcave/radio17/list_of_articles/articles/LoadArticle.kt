@@ -29,7 +29,8 @@ import kotlin.collections.HashMap
  */
 class LoadArticle(internal val activity: FragmentActivity, internal val context: Context) {
 
-    var fontSize: Float = 17F
+    internal var fontSize: Float = 17F
+    internal var playerId = 69
 
     internal var root : LinearLayout = LinearLayout(context)
     internal var doc: Document? = null
@@ -126,13 +127,14 @@ class LoadArticle(internal val activity: FragmentActivity, internal val context:
     }
 
     private fun addPlayer(element: Element): View {
+
         val player = ArticlePlayerFragment()
         val info = Bundle()
         info.putString(PlayerFragment.SOURCE_KEY, element.attr("src"))
         player.arguments = info
 
         val layout = FrameLayout(context)
-        layout.id = 69
+        layout.id = playerId++
         val ft = activity.supportFragmentManager.beginTransaction()
         ft.replace(layout.id, player)
         ft.commit()
