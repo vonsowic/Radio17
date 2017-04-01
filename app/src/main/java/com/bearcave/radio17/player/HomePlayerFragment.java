@@ -40,6 +40,24 @@ public class HomePlayerFragment extends PlayerFragment {
         super.initialize();
         put(R.id.player_home_station_button, new OnHomeButtonClicked());
         put(R.id.player_play_button, new OnPlayButtonClicked());
+
+        try {
+            if (isPlaying()) {
+                playButt.setImageResource(R.drawable.ic_pause_black_24dp);
+            }
+        } catch (NullPointerException e){}
+    }
+
+    @Override
+    public void play() {
+        super.play();
+        playButt.setImageResource(R.drawable.ic_pause_black_24dp);
+    }
+
+    @Override
+    public void pause() {
+        super.pause();
+        playButt.setImageResource(R.drawable.ic_play_arrow_black_24dp);
     }
 
     private class OnPlayButtonClicked implements Runnable{
@@ -56,17 +74,5 @@ public class HomePlayerFragment extends PlayerFragment {
         public void run() {
             onMainButtonClicked();
         }
-    }
-
-    @Override
-    public void play() {
-        super.play();
-        playButt.setImageResource(R.drawable.ic_pause_black_24dp);
-    }
-
-    @Override
-    public void pause() {
-        super.pause();
-        playButt.setImageResource(R.drawable.ic_play_arrow_black_24dp);
     }
 }

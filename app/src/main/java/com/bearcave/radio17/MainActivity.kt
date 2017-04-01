@@ -20,7 +20,7 @@ import com.bearcave.radio17.list_of_articles.articles.ArticleFragment
 import com.bearcave.radio17.list_of_articles.PostContainer
 import com.bearcave.radio17.list_of_articles.articles.TimetableFragment
 import com.bearcave.radio17.player.HomePlayerFragment
-import com.bearcave.radio17.player.HomeViewFragment
+import com.bearcave.radio17.HomeViewFragment
 import com.bearcave.radio17.player.PlayerFragment
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import java.util.*
@@ -83,10 +83,7 @@ class MainActivity : AppCompatActivity(),
 
         // show HomeViewFragment on start
         displaySelectedScreen(R.id.nav_player)
-    }
 
-    override fun onStart() {
-        super.onStart()
         val info = Bundle()
         info.putString(PlayerFragment.SOURCE_KEY, getString(R.string.player_url))
         mainPlayerFragment.arguments = info
@@ -97,9 +94,20 @@ class MainActivity : AppCompatActivity(),
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout?
         if (drawer!!.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+            return
         }
+
+        if (articleLayout?.panelState == SlidingUpPanelLayout.PanelState.EXPANDED ){
+            setArticlePanelCollapsed()
+            return
+        }
+
+        if (articleLayout?.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED ){
+            setArticlePanelHidden()
+            return
+        }
+
+        super.onBackPressed()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

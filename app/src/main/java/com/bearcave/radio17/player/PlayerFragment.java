@@ -10,7 +10,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.SparseArray;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.bearcave.radio17.R;
 import com.bearcave.radio17.RadioFragment;
 import java.io.IOException;
 
@@ -22,14 +25,17 @@ public abstract class PlayerFragment extends RadioFragment
     public PlayerFragment() {}
 
     public static final String SOURCE_KEY = "source-key-for-player";
-    private static String messageToAllPlayers = "all players: shut the fuck up";
+    private static final String messageToAllPlayers = "all players: shut the fuck up";
+    private static final String mainStationUrl = "http://37.187.247.31:8000/;";
 
     private String source;
     private Player player;
     private SparseArray<Runnable> buttonMap;
 
     private LocalBroadcastManager manager;
-    private static IntentFilter pauseAllPlayers = new IntentFilter(messageToAllPlayers);
+    private static IntentFilter pausePlayer = new IntentFilter(messageToAllPlayers);
+
+    private ProgressBar loadingBar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,32 +47,27 @@ public abstract class PlayerFragment extends RadioFragment
     }
 
     protected void initialize(){
-
-        ///player = new Player(this);
+        player = new Player(this);
         buttonMap = new SparseArray<>();
 
         manager = LocalBroadcastManager.getInstance(getContext());
-        manager.registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                pause();
-            }
-        }, pauseAllPlayers);
+        manager.registerReceiver(new OnShutTheFuckUpListener(), pausePlayer);
 
+        loadingBar = (ProgressBar) getActivity().findViewById(R.id.loading_radio_bar);
     }
 
     public void onMainButtonClicked(){
         if (player.isPlaying()) {
             pause();
-            setDataSource(source);
         } else {
+            setDataSource(mainStationUrl);
             play();
         }
     }
 
     public void playPause(){
         if ( player.isPlaying()){
-            pause();
+            pauseAllPlayers();
         } else {
             play();
         }
@@ -80,8 +81,12 @@ public abstract class PlayerFragment extends RadioFragment
         }
     }
 
+    public boolean isPlaying(){
+        return player.isPlaying();
+    }
+
     public void pause(){
-        player.pause();
+        pauseAllPlayers();
     }
 
     public void stop(){
@@ -99,7 +104,8 @@ public abstract class PlayerFragment extends RadioFragment
      */
     public boolean setDataSource(String src){
         if (!(player.isCurrentlySet())){
-            player.setAudio(src);
+            loadingBar.setVisibility(View.VISIBLE);
+            player.setAudio();
             return true;
         }
 
@@ -108,10 +114,12 @@ public abstract class PlayerFragment extends RadioFragment
 
     @Override
     public void onPreparedStateListener() {
+        loadingBar.setVisibility(View.GONE);
+
         try {
-            manager.sendBroadcast(new Intent(messageToAllPlayers));
             player.play();
         } catch (IOException e) {
+            Toast.makeText(getContext(), "Brak lacznosci", Toast.LENGTH_LONG).show(); // TODO: remove when necessary
             notifyAboutInternetConnection();
         }
     }
@@ -122,11 +130,27 @@ public abstract class PlayerFragment extends RadioFragment
     }
 
     /**
-     * Set Runnable on id.
+     * Set Runnable to id.
      * @param id
      * @param action
      */
     protected void put(int id, Runnable action){
         buttonMap.put(id, action );
+    }
+
+    private class OnShutTheFuckUpListener extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            player.pause();
+        }
+    }
+
+    @Override
+    public String onQuestionAboutSourceListener() {
+        return source;
+    }
+
+    public void pauseAllPlayers(){
+        manager.sendBroadcast(new Intent(messageToAllPlayers));
     }
 }

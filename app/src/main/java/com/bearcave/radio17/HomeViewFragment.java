@@ -1,4 +1,4 @@
-package com.bearcave.radio17.player;
+package com.bearcave.radio17;
 
 
 import android.content.Context;

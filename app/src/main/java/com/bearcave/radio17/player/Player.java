@@ -1,20 +1,36 @@
 package com.bearcave.radio17.player;
 
-import android.app.Service;
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
+import android.content.ServiceConnection;
+import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
+import android.widget.Toast;
+
+import com.bearcave.radio17.MainActivity;
+
 import java.io.IOException;
+
 
 public class Player {
 
     private OnStateListener callback;
+    private boolean isBound = false;
 
-    private static PlayerService player = new PlayerService();
+    private static Intent playerIntent = null;
+    private static PlayerService player;
 
-    public Player(PlayerFragment fragment) {
-        this.callback = fragment;
+    public Player(Fragment fragment) {
+        this.callback = (OnStateListener) fragment;
+
+        if (playerIntent == null) {
+            playerIntent = new Intent(fragment.getActivity().getBaseContext(), PlayerService.class);
+            fragment.getActivity().startService(playerIntent);
+            fragment.getActivity().bindService(playerIntent, connection, Context.BIND_AUTO_CREATE);
+        }
     }
 
     public void setAudio(String src)  {
@@ -26,15 +42,23 @@ public class Player {
         }
     }
 
+    public void setAudio()  {
+        setAudio(
+                callback.onQuestionAboutSourceListener()
+        );
+    }
+
+
     public void pause(){
         player.pause();
     }
 
     public void play() throws IOException {
-        //if (isPrepared)
+        if (isCurrentlySet()) {
             player.play();
-        //else
+        } else {
             callback.noSourceSetListener();
+        }
     }
 
     public boolean isPlaying(){
@@ -48,62 +72,29 @@ public class Player {
     public interface OnStateListener{
         void onPreparedStateListener();
         void noSourceSetListener();
+        String onQuestionAboutSourceListener();
     }
 
     public boolean isCurrentlySet(){
-        return player.DJ.equals(callback);
+        return  player.getCallback() == callback &&
+                callback.onQuestionAboutSourceListener().equals(player.getDataSource());
     }
 
-    private static class PlayerService extends Service{
+    private ServiceConnection connection = new ServiceConnection() {
 
-        private MediaPlayer mediaPlayer;
-        private OnStateListener DJ;
-
-        private PlayerService(){
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mediaPlayer) {
-                   DJ.onPreparedStateListener();
-                }
-            });
-            startActivity(new Intent(getBaseContext(), this.getClass()));
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            PlayerService.PlayerBinder binder = (PlayerService.PlayerBinder) service;
+            player = binder.getService();
+            isBound = true;
         }
 
         @Override
-        public IBinder onBind(Intent intent) {
-            return null;
+        public void onServiceDisconnected(ComponentName arg0) {
+            isBound = false;
         }
+    };
 
-        @Override
-        public int onStartCommand(Intent intent, int flags, int startId) {
-            return super.onStartCommand(intent, flags, startId);
-        }
-
-        public void stop() {
-            mediaPlayer.stop();
-        }
-
-        public void pause(){
-            mediaPlayer.pause();
-        }
-
-        public boolean isPlaying(){
-            return mediaPlayer.isPlaying();
-        }
-
-        public void play() {
-            mediaPlayer.start();
-        }
-
-        public void prepare(String src) throws IOException {
-            mediaPlayer.setDataSource(src);
-            mediaPlayer.prepareAsync();
-        }
-
-        private void setDJ(OnStateListener fragmentPlayer){
-            this.DJ = fragmentPlayer;
-        }
-    }
 }
