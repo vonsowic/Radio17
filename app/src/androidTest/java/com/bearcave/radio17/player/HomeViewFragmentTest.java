@@ -1,7 +1,5 @@
 package com.bearcave.radio17.player;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by miwas on 09.03.17.
  */

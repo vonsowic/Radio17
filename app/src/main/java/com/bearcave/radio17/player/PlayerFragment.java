@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.bearcave.radio17.R;
 import com.bearcave.radio17.RadioFragment;
+
 import java.io.IOException;
 
 
@@ -26,7 +27,6 @@ public abstract class PlayerFragment extends RadioFragment
 
     public static final String SOURCE_KEY = "source-key-for-player";
     private static final String messageToAllPlayers = "all players: shut the fuck up";
-    private static final String mainStationUrl = "http://37.187.247.31:8000/;";
 
     private String source;
     private Player player;
@@ -56,18 +56,9 @@ public abstract class PlayerFragment extends RadioFragment
         loadingBar = (ProgressBar) getActivity().findViewById(R.id.loading_radio_bar);
     }
 
-    public void onMainButtonClicked(){
-        if (player.isPlaying()) {
-            pause();
-        } else {
-            setDataSource(mainStationUrl);
-            play();
-        }
-    }
-
     public void playPause(){
         if ( player.isPlaying()){
-            pauseAllPlayers();
+            pause();
         } else {
             play();
         }
@@ -105,11 +96,15 @@ public abstract class PlayerFragment extends RadioFragment
     public boolean setDataSource(String src){
         if (!(player.isCurrentlySet())){
             loadingBar.setVisibility(View.VISIBLE);
-            player.setAudio();
+            player.setAudio(src);
             return true;
         }
 
         return false;
+    }
+
+    public boolean setDataSource(){
+        return setDataSource(source);
     }
 
     @Override

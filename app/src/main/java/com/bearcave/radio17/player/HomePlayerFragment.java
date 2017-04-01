@@ -1,7 +1,6 @@
 package com.bearcave.radio17.player;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,9 @@ public class HomePlayerFragment extends PlayerFragment {
 
     private ImageButton homeButt;
     private ImageButton playButt;
+
+    private static final String MAIN_STATION_URL = "http://37.187.247.31:8000/;";
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,6 +75,15 @@ public class HomePlayerFragment extends PlayerFragment {
         @Override
         public void run() {
             onMainButtonClicked();
+        }
+    }
+
+    public void onMainButtonClicked(){
+        if (isPlaying()) {
+            pause();
+        } else {
+            setDataSource(MAIN_STATION_URL);
+            play();
         }
     }
 }

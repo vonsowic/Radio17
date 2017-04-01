@@ -6,10 +6,8 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.Toast
 import com.bearcave.radio17.R
-import com.bearcave.radio17.list_of_articles.articles.LoadArticle
 import com.bearcave.radio17.exceptions.NoInternetConnectionException
 
 

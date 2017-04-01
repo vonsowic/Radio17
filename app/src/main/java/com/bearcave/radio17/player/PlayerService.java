@@ -13,7 +13,6 @@ public class PlayerService extends Service{
 
     private CustomMediaPlayer mediaPlayer;
     private Player.OnStateListener DJ = null;
-    private boolean hasStarted = false;
 
     private final IBinder binder = new PlayerBinder();
 
@@ -33,9 +32,14 @@ public class PlayerService extends Service{
                 DJ.onPreparedStateListener();
             }
         });
-        hasStarted = true;
 
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mediaPlayer.stop();
     }
 
     public void stop() {
@@ -55,6 +59,7 @@ public class PlayerService extends Service{
     }
 
     public void prepare(String src) throws IOException {
+        mediaPlayer.reset();
         mediaPlayer.setDataSource(src);
         mediaPlayer.prepareAsync();
     }
@@ -76,4 +81,6 @@ public class PlayerService extends Service{
             return PlayerService.this;
         }
     }
+
+
 }

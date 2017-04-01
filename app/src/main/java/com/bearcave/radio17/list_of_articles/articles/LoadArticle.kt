@@ -1,13 +1,14 @@
 package com.bearcave.radio17.list_of_articles.articles
 
-import android.support.v7.app.AppCompatActivity
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.text.Html
 import android.view.View
-import android.widget.*
-
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.bearcave.radio17.R
 import com.bearcave.radio17.player.ArticlePlayerFragment
 import com.bearcave.radio17.player.PlayerFragment
@@ -17,7 +18,6 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap

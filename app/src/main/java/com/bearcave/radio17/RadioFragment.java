@@ -3,11 +3,6 @@ package com.bearcave.radio17;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 
-
-import com.bearcave.radio17.player.Player;
-
-import java.io.IOException;
-
 /**
  * Created by miwas on 20.03.17.
  */

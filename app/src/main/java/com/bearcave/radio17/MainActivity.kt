@@ -8,24 +8,20 @@ import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
 import android.util.SparseArray
-import android.view.Menu
 import android.view.MenuItem
 import com.bearcave.radio17.exceptions.NoInternetConnectionFragment
 import com.bearcave.radio17.list_of_articles.ArticleListViewFragment
 import com.bearcave.radio17.list_of_articles.ListViewAdapter
-import com.bearcave.radio17.list_of_articles.articles.ArticleFragment
 import com.bearcave.radio17.list_of_articles.PostContainer
+import com.bearcave.radio17.list_of_articles.articles.ArticleFragment
 import com.bearcave.radio17.list_of_articles.articles.TimetableFragment
 import com.bearcave.radio17.player.HomePlayerFragment
-import com.bearcave.radio17.HomeViewFragment
 import com.bearcave.radio17.player.PlayerFragment
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import java.util.*
 import kotlin.collections.ArrayList
-
 
 
 class MainActivity : AppCompatActivity(),

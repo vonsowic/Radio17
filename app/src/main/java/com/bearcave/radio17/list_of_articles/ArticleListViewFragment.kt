@@ -9,13 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.ListView
-
+import com.bearcave.radio17.MainActivity
 import com.bearcave.radio17.R
+import com.bearcave.radio17.RadioFragment
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.IOException
-import com.bearcave.radio17.MainActivity
-import com.bearcave.radio17.RadioFragment
 
 
 /**
