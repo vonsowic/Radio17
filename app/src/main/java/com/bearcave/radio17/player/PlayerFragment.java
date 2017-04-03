@@ -84,6 +84,10 @@ public abstract class PlayerFragment extends RadioFragment
         player.stop();
     }
 
+    protected Player getPlayer(){
+        return player;
+    }
+
     @Override
     public void onClick(View v) {
         buttonMap.get(v.getId()).run();
@@ -95,7 +99,7 @@ public abstract class PlayerFragment extends RadioFragment
      */
     public boolean setDataSource(String src){
         if (!(player.isCurrentlySet())){
-            loadingBar.setVisibility(View.VISIBLE);
+            showLoadingBar();
             player.setAudio(src);
             return true;
         }
@@ -107,10 +111,17 @@ public abstract class PlayerFragment extends RadioFragment
         return setDataSource(source);
     }
 
+    public void showLoadingBar(){
+        loadingBar.setVisibility(View.VISIBLE);
+    }
+
+    public void hideLoadingBar(){
+        loadingBar.setVisibility(View.GONE);
+    }
+
     @Override
     public void onPreparedStateListener() {
-        loadingBar.setVisibility(View.GONE);
-
+        hideLoadingBar();
         try {
             player.play();
         } catch (IOException e) {
@@ -134,6 +145,7 @@ public abstract class PlayerFragment extends RadioFragment
     }
 
     private class OnShutTheFuckUpListener extends BroadcastReceiver {
+
         @Override
         public void onReceive(Context context, Intent intent) {
             player.pause();

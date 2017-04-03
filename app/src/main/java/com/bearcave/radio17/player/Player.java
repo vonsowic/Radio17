@@ -24,9 +24,49 @@ public class Player {
         if (playerIntent == null) {
             playerIntent = new Intent(fragment.getActivity().getBaseContext(), PlayerService.class);
             fragment.getActivity().startService(playerIntent);
+            ServiceConnection connection = new ServiceConnection() {
+
+                @Override
+                public void onServiceConnected(ComponentName className,
+                                               IBinder service) {
+                    if (!isBound) {
+                        PlayerService.PlayerBinder binder = (PlayerService.PlayerBinder) service;
+                        player = binder.getService();
+                        isBound = true;
+                    }
+                }
+
+                @Override
+                public void onServiceDisconnected(ComponentName arg0) {
+                    isBound = false;
+                }
+            };
             fragment.getActivity().bindService(playerIntent, connection, Context.BIND_AUTO_CREATE);
         }
     }
+
+    public interface OnStateListener{
+        /**
+         * Called when this particular player is not set.
+         */
+        void onPlayerNotSetListener();
+
+        /**
+         *
+         */
+        void onPreparedStateListener();
+
+        /**
+         * Called when source from CustomMediaPlayer is null.
+         */
+        void noSourceSetListener();
+
+        /**
+         * @return source from player Fragment.
+         */
+        String onQuestionAboutSourceListener();
+    }
+
 
     public void setAudio(String src)  {
         try {
@@ -43,13 +83,28 @@ public class Player {
         );
     }
 
+    public void seekTo(int point){
+       player.seekTo(point);
+    }
+
+    public int getPosition(){
+        return player.getPosition();
+    }
+
+    public int getDuration(){
+        return player.getDuration();
+    }
 
     public void pause(){
         player.pause();
     }
 
     public void play() throws IOException {
-        if (isCurrentlySet()) {
+        if (!isSourceSet()){
+            callback.noSourceSetListener();
+        }
+
+        if (isThisPlayerSet()) {
             player.play();
         } else {
             callback.noSourceSetListener();
@@ -64,32 +119,15 @@ public class Player {
         player.stop();
     }
 
-    public interface OnStateListener{
-        void onPreparedStateListener();
-        void noSourceSetListener();
-        String onQuestionAboutSourceListener();
+    public boolean isThisPlayerSet(){
+        return  player.getCallback() == callback;
+    }
+
+    public boolean isSourceSet(){
+        return player.isSourceSet();
     }
 
     public boolean isCurrentlySet(){
-        return  player.getCallback() == callback &&
-                callback.onQuestionAboutSourceListener().equals(player.getDataSource());
+        return isSourceSet() && isThisPlayerSet();
     }
-
-    private ServiceConnection connection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            PlayerService.PlayerBinder binder = (PlayerService.PlayerBinder) service;
-            player = binder.getService();
-            isBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            isBound = false;
-        }
-    };
-
 }

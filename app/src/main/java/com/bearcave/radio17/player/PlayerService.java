@@ -76,11 +76,26 @@ public class PlayerService extends Service{
         return DJ;
     }
 
+    public boolean isSourceSet(){
+        return mediaPlayer.isSourceSet();
+    }
+
     public class PlayerBinder extends Binder {
         PlayerService getService(){
             return PlayerService.this;
         }
     }
 
+    public void seekTo(int point){
+        mediaPlayer.seekTo(point);
+    }
+
+    public int getPosition(){
+        return mediaPlayer.getCurrentPosition();
+    }
+
+    public int getDuration(){
+        return mediaPlayer.getDuration();
+    }
 
 }

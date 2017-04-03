@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class CustomMediaPlayer extends MediaPlayer {
 
-    private String source;
+    private String source = null;
 
     public CustomMediaPlayer() {
         super();
@@ -20,6 +20,10 @@ public class CustomMediaPlayer extends MediaPlayer {
     public void setDataSource(String path) throws IOException, IllegalArgumentException, SecurityException, IllegalStateException {
         super.setDataSource(path);
         source = path;
+    }
+
+    public boolean isSourceSet(){
+        return source != null;
     }
 
     public String getDataSource(){

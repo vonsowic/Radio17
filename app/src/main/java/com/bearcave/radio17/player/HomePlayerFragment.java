@@ -62,6 +62,11 @@ public class HomePlayerFragment extends PlayerFragment {
         playButt.setImageResource(R.drawable.ic_play_arrow_black_24dp);
     }
 
+    @Override
+    public void onPlayerNotSetListener() {
+        // there is nothing to do for this player
+    }
+
     private class OnPlayButtonClicked implements Runnable{
 
         @Override

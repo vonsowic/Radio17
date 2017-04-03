@@ -28,6 +28,7 @@ public class ArticlePlayerFragment extends PlayerFragment {
         playButt.setOnClickListener(this);
 
         seekBar = (SeekBar) view.findViewById(R.id.article_player_seekbar);
+        seekBar.setOnSeekBarChangeListener(new OnArticleSeekBarChangeListener());
 
         initialize();
         return view;
@@ -46,16 +47,59 @@ public class ArticlePlayerFragment extends PlayerFragment {
     }
 
     @Override
-    public void stop() {
-        super.stop();
+    public void pause() {
+        super.pause();
         playButt.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+    }
+
+    @Override
+    public boolean setDataSource(String src) {
+        return super.setDataSource(src);
+    }
+
+    @Override
+    public void onPlayerNotSetListener() {
+        pauseAllPlayers();
+        noSourceSetListener();
+    }
+
+    @Override
+    public void onPreparedStateListener() {
+        getPlayer().seekTo(
+                seekBar.getProgress()/100 * getPlayer().getDuration()
+        );
+        super.onPreparedStateListener();
     }
 
     private class OnPlayButtonClicked implements Runnable{
 
         @Override
         public void run() {
-            playPause();
+            if (getPlayer().isThisPlayerSet()){
+                playPause();
+            } else {
+                play();
+            }
+        }
+    }
+
+    private class OnArticleSeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            getPlayer().seekTo(
+                    seekBar.getProgress()/100 * getPlayer().getDuration()
+            );
         }
     }
 }
