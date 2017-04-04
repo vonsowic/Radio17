@@ -8,17 +8,17 @@ import android.widget.ImageButton;
 
 import com.bearcave.radio17.R;
 
+import java.io.IOException;
+
 /**
  * Created by miwas on 21.03.17.
  */
-
 public class HomePlayerFragment extends PlayerFragment {
 
     private ImageButton homeButt;
     private ImageButton playButt;
 
     private static final String MAIN_STATION_URL = "http://37.187.247.31:8000/;";
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,6 +38,18 @@ public class HomePlayerFragment extends PlayerFragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        getPlayer().startListeningToAllPlayers();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        getPlayer().stopListeningToAllPlayers();
+    }
+
+    @Override
     protected void initialize() {
         super.initialize();
         put(R.id.player_home_station_button, new OnHomeButtonClicked());
@@ -45,26 +57,28 @@ public class HomePlayerFragment extends PlayerFragment {
 
         try {
             if (isPlaying()) {
-                playButt.setImageResource(R.drawable.ic_pause_black_24dp);
+                onPlayChangeIcons();
             }
         } catch (NullPointerException e){}
     }
 
     @Override
-    public void play() {
-        super.play();
+    protected void onPlayChangeIcons() {
         playButt.setImageResource(R.drawable.ic_pause_black_24dp);
     }
 
     @Override
-    public void pause() {
-        super.pause();
+    protected void onPauseChangeIcons() {
         playButt.setImageResource(R.drawable.ic_play_arrow_black_24dp);
     }
 
     @Override
     public void onPlayerNotSetListener() {
-        // there is nothing to do for this player
+        try {
+            getPlayer().forcedPlay();
+        } catch (IOException e) {
+            notifyAboutInternetConnection();
+        }
     }
 
     private class OnPlayButtonClicked implements Runnable{

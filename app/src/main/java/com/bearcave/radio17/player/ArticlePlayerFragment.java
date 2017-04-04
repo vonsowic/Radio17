@@ -1,6 +1,7 @@
 package com.bearcave.radio17.player;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,14 +10,25 @@ import android.widget.SeekBar;
 
 import com.bearcave.radio17.R;
 
-/**
- * Created by miwas on 21.03.17.
- */
 
 public class ArticlePlayerFragment extends PlayerFragment {
 
-    ImageButton playButt;
-    SeekBar seekBar;
+    private ImageButton playButt;
+    private SeekBar seekBar;
+
+    private static final Integer DELAY = 300;
+    private Handler timerHandler = new Handler();
+
+    Runnable timer = new Runnable() {
+        @Override
+        public void run() {
+            seekBar.setProgress(
+                    getPlayer().getPosition()
+            );
+
+            timerHandler.postDelayed(this, DELAY);
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,15 +53,33 @@ public class ArticlePlayerFragment extends PlayerFragment {
     }
 
     @Override
+    protected void onPlayChangeIcons() {
+        playButt.setImageResource(R.drawable.ic_pause_black_24dp);
+    }
+
+    @Override
+    protected void onPauseChangeIcons() {
+        playButt.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+    }
+
+    @Override
     public void play() {
         super.play();
-        playButt.setImageResource(R.drawable.ic_pause_black_24dp);
+        startTimer();
+    }
+
+    private void startTimer(){
+        timerHandler.postDelayed(timer, DELAY);
     }
 
     @Override
     public void pause() {
         super.pause();
-        playButt.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+        stopTimer();
+    }
+
+    private void stopTimer() {
+        timerHandler.removeCallbacks(timer);
     }
 
     @Override
@@ -59,16 +89,23 @@ public class ArticlePlayerFragment extends PlayerFragment {
 
     @Override
     public void onPlayerNotSetListener() {
-        pauseAllPlayers();
         noSourceSetListener();
     }
 
     @Override
     public void onPreparedStateListener() {
-        getPlayer().seekTo(
-                seekBar.getProgress()/100 * getPlayer().getDuration()
-        );
         super.onPreparedStateListener();
+        seekBar.setMax(getPlayer().getDuration());
+    }
+
+    @Override
+    public void onCurrentPlayerPlayByAnother() {
+        play();
+    }
+
+    @Override
+    public void onCurrentPlayerPausedByAnother() {
+        pause();
     }
 
     private class OnPlayButtonClicked implements Runnable{
@@ -86,20 +123,18 @@ public class ArticlePlayerFragment extends PlayerFragment {
     private class OnArticleSeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
         @Override
-        public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-
-        }
+        public void onProgressChanged(SeekBar seekBar, int i, boolean b) {}
 
         @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-
-        }
+        public void onStartTrackingTouch(SeekBar seekBar) {}
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-            getPlayer().seekTo(
-                    seekBar.getProgress()/100 * getPlayer().getDuration()
-            );
+            if (getPlayer().isThisPlayerSet()) {
+                getPlayer().seekTo(
+                        seekBar.getProgress()
+                );
+            }
         }
     }
 }

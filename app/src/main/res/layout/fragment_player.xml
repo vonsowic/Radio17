@@ -16,18 +16,15 @@
 
         <ImageButton
             android:id="@+id/player_home_station_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:background="@drawable/listen_button"
-            android:layout_margin="@dimen/fab_margin"
             app:srcCompat="@drawable/ic_home_black_24dp" />
 
         <ImageButton
             android:id="@+id/player_play_button"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_margin="@dimen/fab_margin"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:background="@drawable/listen_button"
             app:srcCompat="@drawable/ic_play_arrow_black_24dp" />
 

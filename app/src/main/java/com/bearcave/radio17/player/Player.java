@@ -5,12 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.support.v4.app.Fragment;
 
 import java.io.IOException;
 
 
-public class Player {
+class Player {
 
     private OnStateListener callback;
     private boolean isBound = false;
@@ -18,8 +17,8 @@ public class Player {
     private static Intent playerIntent = null;
     private static PlayerService player;
 
-    public Player(Fragment fragment) {
-        this.callback = (OnStateListener) fragment;
+    Player(PlayerFragment fragment) {
+        this.callback = fragment;
 
         if (playerIntent == null) {
             playerIntent = new Intent(fragment.getActivity().getBaseContext(), PlayerService.class);
@@ -45,14 +44,22 @@ public class Player {
         }
     }
 
-    public interface OnStateListener{
+    void startListeningToAllPlayers(){
+        player.registerListener(callback);
+    }
+
+    void stopListeningToAllPlayers() {
+        player.unregisterListener(callback);
+    }
+
+    interface OnStateListener{
         /**
          * Called when this particular player is not set.
          */
         void onPlayerNotSetListener();
 
         /**
-         *
+         * Calls when prepareAsync() has finished
          */
         void onPreparedStateListener();
 
@@ -61,14 +68,12 @@ public class Player {
          */
         void noSourceSetListener();
 
-        /**
-         * @return source from player Fragment.
-         */
-        String onQuestionAboutSourceListener();
+        void onCurrentPlayerPlayByAnother();
+        void onCurrentPlayerPausedByAnother();
     }
 
 
-    public void setAudio(String src)  {
+    void setAudio(String src)  {
         try {
             player.setDJ(callback);
             player.prepare(src);
@@ -77,29 +82,23 @@ public class Player {
         }
     }
 
-    public void setAudio()  {
-        setAudio(
-                callback.onQuestionAboutSourceListener()
-        );
-    }
-
-    public void seekTo(int point){
+    void seekTo(int point){
        player.seekTo(point);
     }
 
-    public int getPosition(){
+    int getPosition(){
         return player.getPosition();
     }
 
-    public int getDuration(){
+    int getDuration(){
         return player.getDuration();
     }
 
-    public void pause(){
+    void pause(){
         player.pause();
     }
 
-    public void play() throws IOException {
+    void play() throws IOException {
         if (!isSourceSet()){
             callback.noSourceSetListener();
         }
@@ -107,27 +106,28 @@ public class Player {
         if (isThisPlayerSet()) {
             player.play();
         } else {
-            callback.noSourceSetListener();
+            callback.onPlayerNotSetListener();
         }
     }
 
-    public boolean isPlaying(){
+    void forcedPlay() throws IOException {
+        player.play();
+        callback.onCurrentPlayerPlayByAnother();
+    }
+
+    boolean isPlaying(){
         return player.isPlaying();
     }
 
-    public void stop() {
-        player.stop();
-    }
-
-    public boolean isThisPlayerSet(){
+    boolean isThisPlayerSet(){
         return  player.getCallback() == callback;
     }
 
-    public boolean isSourceSet(){
+    boolean isSourceSet(){
         return player.isSourceSet();
     }
 
-    public boolean isCurrentlySet(){
+    boolean isCurrentlySet(){
         return isSourceSet() && isThisPlayerSet();
     }
 }

@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="56dp"
     android:id="@+id/player_fragment"
     android:orientation="horizontal"
     android:weightSum="1"
@@ -12,9 +12,8 @@
 
     <ImageButton
         android:id="@+id/article_play_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_width="56dp"
+        android:layout_height="match_parent"
         android:background="@drawable/listen_button"
         app:srcCompat="@drawable/ic_play_arrow_black_24dp" />
 
@@ -24,6 +23,9 @@
         android:max="100"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="11dip"
+        android:maxHeight="11dip"
+        android:layout_margin="@dimen/fab_margin"
         android:layout_gravity="center"/>
 
 </LinearLayout>

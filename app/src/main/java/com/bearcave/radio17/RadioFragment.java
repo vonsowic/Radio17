@@ -3,9 +3,6 @@ package com.bearcave.radio17;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 
-/**
- * Created by miwas on 20.03.17.
- */
 public abstract class RadioFragment extends Fragment {
 
     private NoInternetConnectionListener callback;

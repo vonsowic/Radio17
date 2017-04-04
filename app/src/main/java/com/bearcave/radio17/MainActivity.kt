@@ -165,5 +165,5 @@ class MainActivity : AppCompatActivity(),
         mainPlayerFragment.onMainButtonClicked()
     }
 
-    inner class RadioFragmentFactory(val type: Class<out Fragment>, val bundle: ArrayList<String>)
+    inner class RadioFragmentFactory(val type: Class<out RadioFragment>, val bundle: ArrayList<String>)
 }

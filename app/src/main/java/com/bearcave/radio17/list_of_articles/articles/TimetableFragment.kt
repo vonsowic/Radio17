@@ -8,13 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.bearcave.radio17.R
+import com.bearcave.radio17.RadioFragment
 import com.bearcave.radio17.exceptions.NoInternetConnectionException
 
 
 /**
  * A simple [Fragment] subclass.
  */
-class TimetableFragment : Fragment() {
+class TimetableFragment : RadioFragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,

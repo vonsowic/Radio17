@@ -8,6 +8,7 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import java.io.IOException;
+import java.util.HashSet;
 
 public class PlayerService extends Service{
 
@@ -15,6 +16,7 @@ public class PlayerService extends Service{
     private Player.OnStateListener DJ = null;
 
     private final IBinder binder = new PlayerBinder();
+    private final HashSet<Player.OnStateListener> listeners = new HashSet<>();
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -39,10 +41,6 @@ public class PlayerService extends Service{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mediaPlayer.stop();
-    }
-
-    public void stop() {
         mediaPlayer.stop();
     }
 
@@ -80,12 +78,6 @@ public class PlayerService extends Service{
         return mediaPlayer.isSourceSet();
     }
 
-    public class PlayerBinder extends Binder {
-        PlayerService getService(){
-            return PlayerService.this;
-        }
-    }
-
     public void seekTo(int point){
         mediaPlayer.seekTo(point);
     }
@@ -98,4 +90,17 @@ public class PlayerService extends Service{
         return mediaPlayer.getDuration();
     }
 
+    public void registerListener(Player.OnStateListener listener){
+        listeners.add(listener);
+    }
+
+    public void unregisterListener(Player.OnStateListener listener){
+        listeners.remove(listener);
+    }
+
+    class PlayerBinder extends Binder {
+        PlayerService getService(){
+            return PlayerService.this;
+        }
+    }
 }
