@@ -55,27 +55,17 @@ public class ArticlePlayerFragment extends PlayerFragment {
     @Override
     protected void onPlayChangeIcons() {
         playButt.setImageResource(R.drawable.ic_pause_black_24dp);
+        startTimer();
     }
 
     @Override
     protected void onPauseChangeIcons() {
         playButt.setImageResource(R.drawable.ic_play_arrow_black_24dp);
-    }
-
-    @Override
-    public void play() {
-        super.play();
-        startTimer();
+        stopTimer();
     }
 
     private void startTimer(){
         timerHandler.postDelayed(timer, DELAY);
-    }
-
-    @Override
-    public void pause() {
-        super.pause();
-        stopTimer();
     }
 
     private void stopTimer() {
@@ -100,12 +90,12 @@ public class ArticlePlayerFragment extends PlayerFragment {
 
     @Override
     public void onCurrentPlayerPlayByAnother() {
-        play();
+        onPlayChangeIcons();
     }
 
     @Override
     public void onCurrentPlayerPausedByAnother() {
-        pause();
+        onPauseChangeIcons();
     }
 
     private class OnPlayButtonClicked implements Runnable{

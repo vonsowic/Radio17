@@ -138,4 +138,7 @@ public abstract class PlayerFragment extends RadioFragment
 
     @Override
     public void onCurrentPlayerPausedByAnother() {}
+
+    @Override
+    public void onFinishedStartingService() {}
 }

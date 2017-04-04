@@ -5,13 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-
 import com.bearcave.radio17.R;
-
 import java.io.IOException;
 
 /**
- * Created by miwas on 21.03.17.
+ * @author Michał Wąsowicz
  */
 public class HomePlayerFragment extends PlayerFragment {
 
@@ -35,12 +33,6 @@ public class HomePlayerFragment extends PlayerFragment {
         initialize();
 
         return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        getPlayer().startListeningToAllPlayers();
     }
 
     @Override
@@ -79,6 +71,11 @@ public class HomePlayerFragment extends PlayerFragment {
         } catch (IOException e) {
             notifyAboutInternetConnection();
         }
+    }
+
+    @Override
+    public void onFinishedStartingService() {
+        getPlayer().startListeningToAllPlayers();
     }
 
     private class OnPlayButtonClicked implements Runnable{

@@ -31,6 +31,7 @@ class Player {
                     if (!isBound) {
                         PlayerService.PlayerBinder binder = (PlayerService.PlayerBinder) service;
                         player = binder.getService();
+                        callback.onFinishedStartingService();
                         isBound = true;
                     }
                 }
@@ -41,6 +42,9 @@ class Player {
                 }
             };
             fragment.getActivity().bindService(playerIntent, connection, Context.BIND_AUTO_CREATE);
+
+        } else {
+            callback.onFinishedStartingService();
         }
     }
 
@@ -70,6 +74,7 @@ class Player {
 
         void onCurrentPlayerPlayByAnother();
         void onCurrentPlayerPausedByAnother();
+        void onFinishedStartingService();
     }
 
 
