@@ -94,6 +94,8 @@ public class HomePlayerFragment extends PlayerFragment {
         }
     }
 
+
+
     public void onMainButtonClicked(){
         if (isPlaying()) {
             pause();

@@ -134,10 +134,14 @@ public abstract class PlayerFragment extends RadioFragment
     }
 
     @Override
-    public void onCurrentPlayerPlayByAnother() {}
+    public void onCurrentPlayerPlayByAnother() {
+        onPlayChangeIcons();
+    }
 
     @Override
-    public void onCurrentPlayerPausedByAnother() {}
+    public void onCurrentPlayerPausedByAnother() {
+        onPauseChangeIcons();
+    }
 
     @Override
     public void onFinishedStartingService() {}

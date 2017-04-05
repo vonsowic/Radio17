@@ -6,6 +6,8 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
+import android.widget.Toast;
+
 import java.io.IOException;
 import java.util.HashSet;
 
@@ -45,7 +47,9 @@ public class PlayerService extends Service{
 
     public void pause(){
         mediaPlayer.pause();
-        listeners.forEach(Player.OnStateListener::onCurrentPlayerPausedByAnother);
+        for (Player.OnStateListener listener : listeners){
+            listener.onCurrentPlayerPausedByAnother();
+        }
 
         if (DJ != null){
             DJ.onCurrentPlayerPausedByAnother();
@@ -54,7 +58,10 @@ public class PlayerService extends Service{
 
     public void play(){
         mediaPlayer.start();
-        listeners.forEach(Player.OnStateListener::onCurrentPlayerPlayByAnother);
+
+        for (Player.OnStateListener listener : listeners){
+            listener.onCurrentPlayerPlayByAnother();
+        }
 
         if (DJ != null){
             DJ.onCurrentPlayerPlayByAnother();
@@ -72,7 +79,9 @@ public class PlayerService extends Service{
     }
 
     public void setDJ(Player.OnStateListener fragmentPlayer){
-        listeners.forEach(Player.OnStateListener::onCurrentPlayerPausedByAnother);
+        for (Player.OnStateListener listener : listeners){
+            listener.onCurrentPlayerPausedByAnother();
+        }
 
         if (DJ != null){
             DJ.onCurrentPlayerPausedByAnother();

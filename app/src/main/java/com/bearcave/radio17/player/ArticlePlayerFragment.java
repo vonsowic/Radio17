@@ -88,16 +88,6 @@ public class ArticlePlayerFragment extends PlayerFragment {
         seekBar.setMax(getPlayer().getDuration());
     }
 
-    @Override
-    public void onCurrentPlayerPlayByAnother() {
-        onPlayChangeIcons();
-    }
-
-    @Override
-    public void onCurrentPlayerPausedByAnother() {
-        onPauseChangeIcons();
-    }
-
     private class OnPlayButtonClicked implements Runnable{
 
         @Override

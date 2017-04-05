@@ -23,9 +23,7 @@
         android:max="100"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="11dip"
-        android:maxHeight="11dip"
-        android:layout_margin="@dimen/fab_margin"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:paddingRight="@dimen/activity_horizontal_margin"/>
 
 </LinearLayout>
