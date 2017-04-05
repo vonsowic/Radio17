@@ -1,18 +1,23 @@
 package com.bearcave.radio17.list_of_articles.articles
 
 import android.content.Context
+import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.text.Html
 import android.view.View
-import android.widget.*
-
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import com.bearcave.radio17.R
+import com.bearcave.radio17.player.ArticlePlayerFragment
+import com.bearcave.radio17.player.PlayerFragment
 import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -22,9 +27,10 @@ import kotlin.collections.HashMap
  *
  * @author Michał Wąsowicz
  */
-class LoadArticle(internal val context: Context) {
+class LoadArticle(internal val activity: FragmentActivity, internal val context: Context) {
 
-    var fontSize: Float = 17F
+    internal var fontSize: Float = 17F
+    internal var playerId = 69
 
     internal var root : LinearLayout = LinearLayout(context)
     internal var doc: Document? = null
@@ -62,12 +68,17 @@ class LoadArticle(internal val context: Context) {
         tagToViewMap.put("strong", this::addText)
 
         tagToViewMap.put("img", this::addImage)
+
+        tagToViewMap.put("source", this::addPlayer)
+
+
     }
 
     fun prepare(url: String?){
         root = LinearLayout(context)
         root.orientation = LinearLayout.VERTICAL
-        doc = Jsoup.connect(url).get()
+        //doc = Jsoup.connect(url).get()
+        doc = Jsoup.connect("http://radio17.pl/polcon/").get()
     }
 
     fun execute(): View {
@@ -113,5 +124,21 @@ class LoadArticle(internal val context: Context) {
         val iv = ImageView(context)
         imageLoader.displayImage(element.absUrl("src"), iv, options)
         return iv
+    }
+
+    private fun addPlayer(element: Element): View {
+
+        val player = ArticlePlayerFragment()
+        val info = Bundle()
+        info.putString(PlayerFragment.SOURCE_KEY, element.attr("src"))
+        player.arguments = info
+
+        val layout = FrameLayout(context)
+        layout.id = playerId++
+        val ft = activity.supportFragmentManager.beginTransaction()
+        ft.replace(layout.id, player)
+        ft.commit()
+
+        return layout
     }
 }

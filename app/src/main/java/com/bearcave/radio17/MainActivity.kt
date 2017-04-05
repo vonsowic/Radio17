@@ -8,30 +8,28 @@ import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
 import android.util.SparseArray
-import android.view.Menu
 import android.view.MenuItem
 import com.bearcave.radio17.exceptions.NoInternetConnectionFragment
 import com.bearcave.radio17.list_of_articles.ArticleListViewFragment
 import com.bearcave.radio17.list_of_articles.ListViewAdapter
+import com.bearcave.radio17.list_of_articles.PostContainer
 import com.bearcave.radio17.list_of_articles.articles.ArticleFragment
-import com.bearcave.radio17.list_of_articles.articles.PostContainer
 import com.bearcave.radio17.list_of_articles.articles.TimetableFragment
-import com.bearcave.radio17.player.HomeViewFragment
+import com.bearcave.radio17.player.HomePlayerFragment
 import com.bearcave.radio17.player.PlayerFragment
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-
 class MainActivity : AppCompatActivity(),
         NavigationView.OnNavigationItemSelectedListener,
         RadioFragment.NoInternetConnectionListener,
         ArticleFragment.OnArticleStateListener,
-        ListViewAdapter.OnArticleCreatedListener {
+        ListViewAdapter.OnArticleCreatedListener,
+        HomeViewFragment.Listener {
 
     object RADIO_STATIC_FIELDS{
         val FRAGMENT_KEY = "fragment_key"
@@ -40,10 +38,12 @@ class MainActivity : AppCompatActivity(),
 
     internal val fragmentMap = SparseArray<RadioFragmentFactory>()
     internal var articleLayout: SlidingUpPanelLayout? = null
+    internal val mainPlayerFragment = HomePlayerFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         val toolbar = findViewById(R.id.toolbar) as Toolbar?
         setSupportActionBar(toolbar)
 
@@ -55,23 +55,15 @@ class MainActivity : AppCompatActivity(),
         val navigationView = findViewById(R.id.nav_view) as NavigationView?
         navigationView!!.setNavigationItemSelectedListener(this)
 
-        // add fragment player to player placeholder(Sliding layout in main view)
-        val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.player_placeholder, PlayerFragment())
-        ft.commit()
-
         articleLayout = findViewById(R.id.sliding_layout) as SlidingUpPanelLayout?
         articleLayout!!.setOnClickListener { articleLayout?.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED }
 
         val fab = findViewById(R.id.fab_showing_player) as FloatingActionButton?
         fab!!.setOnClickListener {
-
             if (articleLayout?.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
-                articleLayout?.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
-                fab.setImageResource(android.R.drawable.arrow_down_float)
+                setArticlePanelCollapsed()
             } else {
-                articleLayout?.panelState = SlidingUpPanelLayout.PanelState.HIDDEN
-                fab.setImageResource(android.R.drawable.arrow_up_float)
+                setArticlePanelHidden()
             }
         }
 
@@ -87,15 +79,31 @@ class MainActivity : AppCompatActivity(),
 
         // show HomeViewFragment on start
         displaySelectedScreen(R.id.nav_player)
+
+        val info = Bundle()
+        info.putString(PlayerFragment.SOURCE_KEY, getString(R.string.player_url))
+        mainPlayerFragment.arguments = info
+        displayFragment(mainPlayerFragment, R.id.player_placeholder)
     }
 
     override fun onBackPressed() {
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout?
         if (drawer!!.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+            return
         }
+
+        if (articleLayout?.panelState == SlidingUpPanelLayout.PanelState.EXPANDED ){
+            setArticlePanelCollapsed()
+            return
+        }
+
+        if (articleLayout?.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED ){
+            setArticlePanelHidden()
+            return
+        }
+
+        super.onBackPressed()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -115,6 +123,18 @@ class MainActivity : AppCompatActivity(),
         ft.commit()
     }
 
+    private fun setArticlePanelCollapsed() {
+        articleLayout?.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+    }
+
+    private fun setArticlePanelHidden() {
+        articleLayout?.panelState = SlidingUpPanelLayout.PanelState.HIDDEN
+    }
+
+    private fun setArticlePanelExpanded() {
+        articleLayout?.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
+    }
+
     fun createFragment(factory: RadioFragmentFactory): Fragment {
         val fragment = factory.type.newInstance()
         val info = Bundle()
@@ -123,12 +143,9 @@ class MainActivity : AppCompatActivity(),
         return fragment
     }
 
-    override fun showInternetState() {
-        displayFragment(NoInternetConnectionFragment())
-    }
-
-    override fun onNoInternetConnection() {
+    override fun onNoInternetConnectionState() {
         displayFragment(NoInternetConnectionFragment(), R.id.article_placeholder)
+        setArticlePanelExpanded()
     }
 
     override fun onArticlePrepared() {
@@ -136,7 +153,6 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun OnArticleLoaded(post: PostContainer) {
-        print("VIEW CONTAINER" + post.title + post.url)
         val article = ArticleFragment()
         val info = Bundle()
         info.putSerializable(RADIO_STATIC_FIELDS.POST_CONTAINER, post)
@@ -145,5 +161,9 @@ class MainActivity : AppCompatActivity(),
         displayFragment(article, R.id.article_placeholder)
     }
 
-    inner class RadioFragmentFactory(val type: Class<out Fragment>, val bundle: ArrayList<String>)
+    override fun onMainPlayButtonClickedListener() {
+        mainPlayerFragment.onMainButtonClicked()
+    }
+
+    inner class RadioFragmentFactory(val type: Class<out RadioFragment>, val bundle: ArrayList<String>)
 }

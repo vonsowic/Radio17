@@ -15,37 +15,18 @@
 
 
         <ImageButton
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:srcCompat="@drawable/ikona_radio17"
+            android:id="@+id/player_home_station_button"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:background="@drawable/listen_button"
-            android:id="@+id/player_home_station_button" />
+            app:srcCompat="@drawable/ic_home_black_24dp" />
 
         <ImageButton
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/listen_button"
-            app:srcCompat="@android:drawable/ic_media_play"
             android:id="@+id/player_play_button"
-            android:layout_weight="1" />
-
-        <ImageButton
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:background="@drawable/listen_button"
-            app:srcCompat="@android:drawable/ic_media_pause"
-            android:id="@+id/player_pause_button"
-            />
-
-        <TextView
-            android:id="@+id/source_info"
-            android:ellipsize="end"
-            android:selectAllOnFocus="true"
-            android:layout_width="140dp"
-            android:layout_height="45dp"
-            android:textSize="20sp"
-            android:maxLines="1"
-            android:text="Text View hakuna matatua jest zielony mis TextVtuany mis TextView hakuna matatua jest zielony mis " />
+            app:srcCompat="@drawable/ic_play_arrow_black_24dp" />
 
 
     </LinearLayout>

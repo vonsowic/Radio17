@@ -2,57 +2,147 @@ package com.bearcave.radio17.player;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
+import android.support.annotation.Nullable;
+import android.util.SparseArray;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.bearcave.radio17.R;
+import com.bearcave.radio17.RadioFragment;
 
 import java.io.IOException;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class PlayerFragment extends Fragment implements View.OnClickListener{
 
-    String audioUrl;
+public abstract class PlayerFragment extends RadioFragment
+        implements  View.OnClickListener,
+                    Player.OnStateListener{
 
-    public PlayerFragment() {
-        // Required empty public constructor
+    public PlayerFragment() {}
+
+    public static final String SOURCE_KEY = "source-key-for-player";
+
+    private String source;
+    private Player player;
+    private SparseArray<Runnable> buttonMap;
+
+    private ProgressBar loadingBar;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_player, container, false);
-        view.findViewById(R.id.player_play_button).setOnClickListener(this);
-        view.findViewById(R.id.player_pause_button).setOnClickListener(this);
-        view.findViewById(R.id.player_home_station_button).setOnClickListener(this);
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
-        return view;
+
+    protected void setSource(){
+        source = getArguments().getString(SOURCE_KEY);
+    }
+
+    protected void initialize(){
+        player = new Player(this);
+        buttonMap = new SparseArray<>();
+        loadingBar = (ProgressBar) getActivity().findViewById(R.id.loading_radio_bar);
+    }
+
+    public void playPause(){
+        if ( player.isPlaying()){
+            pause();
+        } else {
+            play();
+        }
+    }
+
+    public void play(){
+        try {
+            player.play();
+        } catch (IOException e) {
+            notifyAboutInternetConnection();
+        }
+        onPlayChangeIcons();
+    }
+
+    protected abstract void onPlayChangeIcons();
+    protected abstract void onPauseChangeIcons();
+
+    public boolean isPlaying(){
+        return player.isPlaying();
+    }
+
+    public void pause(){
+        player.pause();
+        onPauseChangeIcons();
+    }
+
+    protected Player getPlayer(){
+        return player;
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.player_play_button:
-                try {
-                    Player.play();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
+        buttonMap.get(v.getId()).run();
+    }
 
-            case R.id.player_pause_button:
-                Player.pause();
-                break;
+    /**
+     * @param src url to audio
+     * @return true when source is changed; false otherwise
+     */
+    public boolean setDataSource(String src){
+        if (!(player.isCurrentlySet())){
+            showLoadingBar();
+            player.setAudio(src);
+            return true;
+        }
 
-            case R.id.player_home_station_button:
-                Player.setAudio(getString(R.string.player_url));
+        return false;
+    }
 
-                break;
+    public void showLoadingBar(){
+        loadingBar.setVisibility(View.VISIBLE);
+    }
+
+    public void hideLoadingBar(){
+        loadingBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onPreparedStateListener() {
+        hideLoadingBar();
+        try {
+            player.play();
+        } catch (IOException e) {
+            notifyAboutInternetConnection();
         }
     }
+
+    @Override
+    public void noSourceSetListener() {
+        showLoadingBar();
+        player.setAudio(source);
+    }
+
+    /**
+     * Set Runnable to id.
+     * @param id
+     * @param action
+     */
+    protected void put(int id, Runnable action){
+        buttonMap.put(id, action );
+    }
+
+    @Override
+    public void onCurrentPlayerPlayByAnother() {
+        onPlayChangeIcons();
+    }
+
+    @Override
+    public void onCurrentPlayerPausedByAnother() {
+        onPauseChangeIcons();
+    }
+
+    @Override
+    public void onFinishedStartingService() {}
 }

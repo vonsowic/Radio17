@@ -1,10 +1,6 @@
 package com.bearcave.radio17.list_of_articles;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 import com.bearcave.radio17.R;
-import com.bearcave.radio17.list_of_articles.articles.ArticleFragment;
-import com.bearcave.radio17.list_of_articles.articles.PostContainer;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -46,7 +38,7 @@ public class ListViewAdapter extends BaseAdapter {
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.logo) // resource or drawable
-                .cacheInMemory(false) // default => false
+                .cacheInMemory(true)
                 .cacheOnDisk(true) // default => false
                 .build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this.context)
@@ -102,10 +94,10 @@ public class ListViewAdapter extends BaseAdapter {
             posts.add(
                     new PostContainer(
                             post.getElementsByClass("post-title").first().select("a").attr("href"),
-                            post.getElementsByClass("excerpt-container").first().text(),
+                            post.getElementsByClass("post-title").first().text(),
                             post.getElementsByClass("gallery-icon").first().attr("href"),
-                            post.getElementsByClass("post-title").first().text()
-                    )
+                            post.getElementsByClass("excerpt-container").first().text()
+                            )
             );
         }
     }

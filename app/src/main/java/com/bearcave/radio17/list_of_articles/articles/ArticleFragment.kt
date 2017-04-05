@@ -12,13 +12,15 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 
 import com.bearcave.radio17.R
+import com.bearcave.radio17.RadioFragment
+import com.bearcave.radio17.list_of_articles.PostContainer
 import java.io.IOException
 
 
 /**
  * A simple [Fragment] subclass.
  */
-class ArticleFragment : Fragment() {
+class ArticleFragment : RadioFragment() {
 
     var callback : OnArticleStateListener? = null
 
@@ -52,7 +54,7 @@ class ArticleFragment : Fragment() {
         }
 
         override fun doInBackground(vararg url: String?): LoadArticle {
-            val loader = LoadArticle(context)
+            val loader = LoadArticle(activity, context)
             try {
                 loader.prepare(url[0])
             } catch (e: IOException){
@@ -66,7 +68,7 @@ class ArticleFragment : Fragment() {
             mProgressDialog.dismiss()
 
             if(noInterentConnection != null){
-                callback?.onNoInternetConnection()
+                notifyAboutInternetConnection()
                 return
             }
 
@@ -76,7 +78,6 @@ class ArticleFragment : Fragment() {
     }
 
     interface OnArticleStateListener{
-        fun onNoInternetConnection()
         fun onArticlePrepared()
     }
 }

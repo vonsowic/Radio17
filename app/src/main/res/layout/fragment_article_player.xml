@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:id="@+id/player_fragment"
+    android:orientation="horizontal"
+    android:weightSum="1"
+    android:layout_gravity="center_vertical"
+    tools:context="com.bearcave.radio17.player.PlayerFragment">
+
+
+    <ImageButton
+        android:id="@+id/article_play_button"
+        android:layout_width="56dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/listen_button"
+        app:srcCompat="@drawable/ic_play_arrow_black_24dp" />
+
+
+    <SeekBar
+        android:id="@+id/article_player_seekbar"
+        android:max="100"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingRight="@dimen/activity_horizontal_margin"/>
+
+</LinearLayout>
