@@ -10,10 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-
 import com.bearcave.radio17.R
 import com.bearcave.radio17.RadioFragment
-import com.bearcave.radio17.list_of_articles.PostContainer
 import java.io.IOException
 
 
@@ -44,7 +42,7 @@ class ArticleFragment : RadioFragment() {
     inner class LoadArticleTask(val layout: LinearLayout) : AsyncTask<String, Void, LoadArticle>() {
 
         internal val mProgressDialog: ProgressDialog = ProgressDialog(context)
-        internal var noInterentConnection : IOException? = null
+        internal var noInternetConnection: IOException? = null
 
         override fun onPreExecute() {
             super.onPreExecute()
@@ -58,7 +56,7 @@ class ArticleFragment : RadioFragment() {
             try {
                 loader.prepare(url[0])
             } catch (e: IOException){
-                noInterentConnection = e
+                noInternetConnection = e
             }
             return loader
         }
@@ -67,7 +65,7 @@ class ArticleFragment : RadioFragment() {
             super.onPostExecute(result)
             mProgressDialog.dismiss()
 
-            if(noInterentConnection != null){
+            if(noInternetConnection != null){
                 notifyAboutInternetConnection()
                 return
             }

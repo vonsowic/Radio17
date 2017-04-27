@@ -14,7 +14,7 @@ import android.view.MenuItem
 import com.bearcave.radio17.exceptions.NoInternetConnectionFragment
 import com.bearcave.radio17.list_of_articles.ArticleListViewFragment
 import com.bearcave.radio17.list_of_articles.ListViewAdapter
-import com.bearcave.radio17.list_of_articles.PostContainer
+import com.bearcave.radio17.list_of_articles.articles.PostContainer
 import com.bearcave.radio17.list_of_articles.articles.ArticleFragment
 import com.bearcave.radio17.list_of_articles.articles.TimetableFragment
 import com.bearcave.radio17.player.HomePlayerFragment
@@ -71,8 +71,8 @@ class MainActivity : AppCompatActivity(),
         fragmentMap.put(R.id.nav_player,        RadioFragmentFactory(HomeViewFragment::class.java,          ArrayList<String>()))
         fragmentMap.put(R.id.nav_timetable,     RadioFragmentFactory(TimetableFragment::class.java,         ArrayList(Arrays.asList(getString(R.string.timetable), "/ramowka"))))
         fragmentMap.put(R.id.nav_news,          RadioFragmentFactory(ArticleListViewFragment::class.java,   ArrayList(Arrays.asList(getString(R.string.news), "/category/aktualnosci"))))
-        fragmentMap.put(R.id.nav_musicblog,     RadioFragmentFactory(ArticleListViewFragment::class.java,   ArrayList(Arrays.asList(getString(R.string.parties), "/category/blogmuzyczny"))))
-        fragmentMap.put(R.id.nav_interview,     RadioFragmentFactory(ArticleListViewFragment::class.java,   ArrayList(Arrays.asList(getString(R.string.podcast), "/category/blogmuzyczny/wywiady"))))
+        fragmentMap.put(R.id.nav_musicblog,     RadioFragmentFactory(ArticleListViewFragment::class.java,   ArrayList(Arrays.asList(getString(R.string.musicblog), "/category/blogmuzyczny"))))
+        fragmentMap.put(R.id.nav_interview,     RadioFragmentFactory(ArticleListViewFragment::class.java,   ArrayList(Arrays.asList(getString(R.string.interviews), "/category/blogmuzyczny/wywiady"))))
         fragmentMap.put(R.id.nav_concerts,      RadioFragmentFactory(ArticleListViewFragment::class.java,   ArrayList(Arrays.asList(getString(R.string.concerts), "/category/blogmuzyczny/zespoly"))))
         fragmentMap.put(R.id.nav_reports,       RadioFragmentFactory(ArticleListViewFragment::class.java,   ArrayList(Arrays.asList(getString(R.string.reports), "/category/blogmuzyczny/relacje"))))
         fragmentMap.put(R.id.nav_reviews,       RadioFragmentFactory(ArticleListViewFragment::class.java,   ArrayList(Arrays.asList(getString(R.string.reviews), "/category/blogmuzyczny/recenzje"))))

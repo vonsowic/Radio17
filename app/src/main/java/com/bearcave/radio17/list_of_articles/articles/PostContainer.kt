@@ -1,4 +1,4 @@
-package com.bearcave.radio17.list_of_articles
+package com.bearcave.radio17.list_of_articles.articles
 
 import java.io.Serializable
 

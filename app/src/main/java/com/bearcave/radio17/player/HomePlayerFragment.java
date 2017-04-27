@@ -36,12 +36,6 @@ public class HomePlayerFragment extends PlayerFragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        getPlayer().stopListeningToAllPlayers();
-    }
-
-    @Override
     protected void initialize() {
         super.initialize();
         put(R.id.player_home_station_button, new OnHomeButtonClicked());

@@ -120,6 +120,10 @@ public class PlayerService extends Service{
 
     public void unregisterListener(Player.OnStateListener listener){
         listeners.remove(listener);
+
+        if ( DJ == listener){
+            DJ = null;
+        }
     }
 
     class PlayerBinder extends Binder {

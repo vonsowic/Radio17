@@ -28,13 +28,9 @@ public abstract class PlayerFragment extends RadioFragment
     private ProgressBar loadingBar;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
+        getPlayer().stopListeningToAllPlayers();
     }
 
 

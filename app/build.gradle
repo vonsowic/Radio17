@@ -28,16 +28,26 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // kotlin
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
-    compile 'com.android.support:appcompat-v7:25.3.0'
-    compile 'com.android.support:support-v4:25.3.0'
-    compile 'com.android.support:design:25.3.0'
+    // ButterKnife
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+
+    // JSOAP
     compile 'org.jsoup:jsoup:1.10.2'
+
+    // andorid universal image loadee
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
-    compile 'me.biubiubiu.justifytext:library:1.1'
-    compile 'com.github.bluejamesbond:textjustify-android:2.1.6'
+
+    // sliding up panel
     compile 'com.sothree.slidinguppanel:library:3.3.1'
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'org.assertj:assertj-core:3.6.1'
